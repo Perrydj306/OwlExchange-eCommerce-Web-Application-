@@ -1,7 +1,10 @@
 import React, {useState} from "react";
+import { useNavigate } from "react-router-dom"; // Import navigation
 import "./Login.css"; // import the css file
 
 export default function Login() {
+
+    const navigate = useNavigate(); // Create navigate function
 
     const [isLogin, setIsLogin] = useState(true);
     const [isForgot, setIsForgot] = useState(false);
@@ -30,9 +33,21 @@ export default function Login() {
         setLoginError("Please fill in all fields")
         return;
     }
+
     setLoginError("");
-    // Here you would call your backend API to login
+
+    // Admin login
+    if(email === "admin@owlexchange.com" && password === "Owlexchangeadmin#01") {
+      navigate("/admin"); //Go to AdminPage
+      return;
+    }
+
+    // Normal user login
     alert(`Login request sent for ${email}`)
+    // TODO :Here you would call your backend API to login
+
+    // Normal user login
+    navigate("/dashboard"); // Redirect to user Dashboard
     };
 
     // Handle Register
