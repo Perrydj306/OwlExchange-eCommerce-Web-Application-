@@ -4,6 +4,7 @@ import "./Login.css"; // import the css file
 export default function Login() {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [isForgot, setIsForgot] = useState(false);
 
     // Login State
     const [email, setEmail] = useState("");
@@ -18,6 +19,10 @@ export default function Login() {
     const [registerError, setRegisterError] = useState("");
     const [registerSuccess, setRegisterSuccess] = useState("");
 
+    // Forgot Password State
+    const [forgotEmail, setForgotEmail] = useState("");
+    const [forgotMessage, setForgotMessage] = useState("");
+
     const handleLogin = (e) => {
         e.preventDefault();
 
@@ -26,7 +31,8 @@ export default function Login() {
         return;
     }
     setLoginError("");
-    alert(`Logged in as ${email}`)
+    // Here you would call your backend API to login
+    alert(`Login request sent for ${email}`)
     };
 
     // Handle Register
@@ -43,46 +49,95 @@ export default function Login() {
         setLastName("");
         setRegisterEmail("");
         setRegisterPassword("");
+        // Here you would call your backend API to register
+    };
+
+    const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if (!forgotEmail) {
+      setForgotMessage("Please enter your email");
+      return;
     }
+    setForgotMessage(`If an account exists for ${forgotEmail}, instructions to reset your password have been sent.`);
+    setForgotEmail("");
+    // Here you would call your backend API to initiate password reset
+  };
 
     return (
     <div className="login-container">
       <div className="login-card">
         {isLogin ? (
-          <>
-            <h2 className="login-title">OwlExchange</h2>
-            {loginError && <p className="error">{loginError}</p>}
-            <form onSubmit={handleLogin}>
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                />
-              </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                />
-              </div>
-              <button type="submit" className="login-btn">Login</button>
-            </form>
-            <p style={{ textAlign: "center", marginTop: "1rem" }}>
-              Don't have an account?{" "}
-              <button
-                onClick={() => setIsLogin(false)}
-                style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
-              >
-                New User
-              </button>
-            </p>
-          </>
+          isForgot ? (
+            <>
+              <h2 className="login-title">Forgot Password</h2>
+              {forgotMessage && (
+                <p style={{ color: "green", textAlign: "center" }}>{forgotMessage}</p>
+              )}
+              <form onSubmit={handleForgotPassword}>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <button type="submit" className="login-btn">Send Instructions</button>
+              </form>
+              <p style={{ textAlign: "center", marginTop: "1rem" }}>
+                <button
+                  onClick={() => setIsForgot(false)}
+                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                >
+                  Back to Login
+                </button>
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="login-title">OwlExchange</h2>
+              {loginError && <p className="error">{loginError}</p>}
+              <form onSubmit={handleLogin}>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                  />
+                </div>
+                <button type="submit" className="login-btn">Login</button>
+              </form>
+              <p style={{ textAlign: "center", marginTop: "0.5rem" }}>
+                <button
+                  onClick={() => setIsForgot(true)}
+                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                >
+                  Forgot Password?
+                </button>
+              </p>
+              <p style={{ textAlign: "center", marginTop: "1rem" }}>
+                Don't have an account?{" "}
+                <button
+                  onClick={() => setIsLogin(false)}
+                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                >
+                  New User
+                </button>
+              </p>
+            </>
+          )
         ) : (
           <>
             <h2 className="login-title">Register New User</h2>
