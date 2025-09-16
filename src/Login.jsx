@@ -50,7 +50,7 @@ export default function Login() {
       <div className="login-card">
         {isLogin ? (
           <>
-            <h2 className="login-title">Login</h2>
+            <h2 className="login-title">OwlExchange</h2>
             {loginError && <p className="error">{loginError}</p>}
             <form onSubmit={handleLogin}>
               <div className="form-group">
@@ -79,7 +79,7 @@ export default function Login() {
                 onClick={() => setIsLogin(false)}
                 style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
               >
-                Register here
+                New User
               </button>
             </p>
           </>
