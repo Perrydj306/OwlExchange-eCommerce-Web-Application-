@@ -1,19 +1,35 @@
+
+/* Safe resets */
+*, *::before, *::after { box-sizing: border-box; }
+
+body,html, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
 /*Container centers the login card8*/
 .login-container {
+    position: fixed;    /* tie to viewport */
+    inset: 0; 
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #f3f3f3;
+   /* height: 100vh;
+    width: 100%; */
+     z-index: 1000;
 }
 
 /* Card styling */
 .login-card {
-    background: white;
-    padding: 2rem;
+    background-color: white;
+    padding: 2.5rem;
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-    width: 350px;
+    width: clamp(280px, 90%, 400px); /* mobile friendly */
+    max-width: 600px;
+    color: #333;
 }
 
 /* Title */
@@ -51,6 +67,8 @@
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
+    background-color: white;
+    color: #333;
 }
 
 .form-group input:focus {
@@ -63,7 +81,7 @@
     width: 100%;
     padding: 0.7rem;
     border: none;
-    background-color: #007bff;
+    background-color: #178815;
     color: white;
     font-size: 16px;
     border-radius: 6px;
