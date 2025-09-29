@@ -26,6 +26,24 @@ export default function Login() {
     const [forgotEmail, setForgotEmail] = useState("");
     const [forgotMessage, setForgotMessage] = useState("");
 
+     // Password validation function
+        const validatePassword = (password) => {
+        const minLength = password.length >= 8;
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+        
+        if (!minLength) {
+            return "Password must be at least 8 characters long";
+        }
+        if (!hasNumber) {
+            return "Password must contain at least 1 number";
+        }
+        if (!hasSpecialChar) {
+            return "Password must contain at least 1 special character";
+        }
+        return null; // Valid password
+    };
+
     const handleLogin = (e) => {
         e.preventDefault();
 
@@ -33,6 +51,13 @@ export default function Login() {
         setLoginError("Please fill in all fields")
         return;
     }
+
+    // Validate password format
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+            setLoginError(passwordError);
+            return;
+        }
 
     setLoginError("");
 
