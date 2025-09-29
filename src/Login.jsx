@@ -230,7 +230,7 @@ export default function Login() {
                   onClick={() => navigate("/")}
                   className="back-landing-btn"
                 >
-                  Back to Login
+                  Back to Home
                 </button>
               </p>
       </div>
