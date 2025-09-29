@@ -100,14 +100,6 @@ export default function Login() {
                 </div>
                 <button type="submit" className="login-btn">Send Instructions</button>
               </form>
-              <p style={{ textAlign: "center", marginTop: "1rem" }}>
-                <button
-                  onClick={() => setIsForgot(false)}
-                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
-                >
-                  Back to Login
-                </button>
-              </p>
             </>
           ) : (
             <>
@@ -208,6 +200,14 @@ export default function Login() {
             </p>
           </>
         )}
+        <p className="back-landing-wrapper">
+                <button
+                  onClick={() => navigate("/")}
+                  className="back-landing-btn"
+                >
+                  Back to Login
+                </button>
+              </p>
       </div>
     </div>
   );
