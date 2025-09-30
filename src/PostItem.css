@@ -1,0 +1,200 @@
+/* Modal Dialog */
+.post-item-dialog .MuiDialog-paper {
+  border-radius: 16px !important;
+  padding: 0;
+  max-height: 90vh;
+}
+
+/* Dialog Title */
+.dialog-title {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 24px 32px 16px !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.close-button {
+  color: #6b7280 !important;
+}
+
+.close-button:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* Dialog Content */
+.dialog-content {
+  padding: 24px 32px 32px !important;
+}
+
+/* Transaction Type Tabs */
+.transaction-tabs {
+  margin-bottom: 32px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.transaction-tabs .MuiTab-root {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  min-height: 56px !important;
+  color: #6b7280 !important;
+}
+
+.transaction-tabs .MuiTab-root.Mui-selected {
+  color: #1f2937 !important;
+}
+
+.transaction-tabs .MuiTabs-indicator {
+  background-color: #f59e0b !important;
+  height: 3px !important;
+}
+
+/* Form Container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form Field */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-weight: 500 !important;
+  color: #374151 !important;
+  font-size: 0.875rem !important;
+}
+
+.required {
+  color: #ef4444;
+}
+
+/* Form Row (for side-by-side fields) */
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+/* Text Fields */
+.form-field .MuiTextField-root .MuiOutlinedInput-root {
+  background-color: #f9fafb;
+}
+
+.form-field .MuiTextField-root .MuiOutlinedInput-root:hover {
+  background-color: #f3f4f6;
+}
+
+.form-field .MuiTextField-root .MuiOutlinedInput-root.Mui-focused {
+  background-color: #ffffff;
+}
+
+/* Select Fields */
+.form-field .MuiSelect-select {
+  background-color: #f9fafb;
+}
+
+.form-field .MuiOutlinedInput-root:hover {
+  background-color: #f3f4f6;
+}
+
+.form-field .MuiOutlinedInput-root.Mui-focused {
+  background-color: #ffffff;
+}
+
+/* Upload Button */
+.upload-button {
+  border-color: #d1d5db !important;
+  color: #6b7280 !important;
+  text-transform: none !important;
+  padding: 12px 20px !important;
+  justify-content: flex-start !important;
+  background-color: #f9fafb !important;
+}
+
+.upload-button:hover {
+  background-color: #f3f4f6 !important;
+  border-color: #9ca3af !important;
+}
+
+/* Tags Container */
+.tags-container {
+  display: flex;
+  gap: 8px;
+}
+
+.add-tag-button {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  text-transform: none !important;
+  padding: 8px 24px !important;
+  white-space: nowrap !important;
+}
+
+.add-tag-button:hover {
+  background-color: #1f2937 !important;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-button {
+  border-color: #d1d5db !important;
+  color: #6b7280 !important;
+  text-transform: none !important;
+  padding: 10px 24px !important;
+}
+
+.cancel-button:hover {
+  background-color: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+.post-button {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  text-transform: none !important;
+  padding: 10px 32px !important;
+}
+
+.post-button:hover {
+  background-color: #1f2937 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .dialog-title {
+    padding: 16px 20px !important;
+  }
+
+  .dialog-content {
+    padding: 20px !important;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+}
