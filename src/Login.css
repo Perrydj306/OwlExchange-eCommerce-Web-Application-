@@ -19,6 +19,7 @@ body,html, #root {
    /* height: 100vh;
     width: 100%; */
      z-index: 1000;
+     background: linear-gradient(to bottom, #fff, #fff9e6);
 }
 
 /* Card styling */
@@ -91,4 +92,23 @@ body,html, #root {
 
 .login-btn:hover {
     background-color: #0056b3;
+}
+
+.back-landing-wrapper {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.back-landing-btn {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.back-landing-btn:hover {
+  color: #0056b3;
+  text-decoration: underline;
 }

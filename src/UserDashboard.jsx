@@ -1,76 +1,181 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import "./LandingPage.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  TextField,
+  InputAdornment,
+  Avatar,
+  Card,
+  CardContent,
+  Grid
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  CardGiftcard as GiftIcon,
+  SwapHoriz as SwapIcon,
+  Favorite as HeartIcon,
+  Add as AddIcon,
+  Logout as LogoutIcon
+} from '@mui/icons-material';
+import './UserDashboard.css';
+import PostItem from './PostItem';
 
-function LandingPage() {
+const UserDashboard = () => {
   const navigate = useNavigate();
+  const [openPostModal, setOpenPostModal] = useState(false);
+
+  const handleSignOut = () => {
+    // Add any sign out logic here (clear tokens, etc.)
+    navigate('/');
+  };
+
+  const handleOpenPostModal = () => {
+    setOpenPostModal(true);
+  };
+
+  const handleClosePostModal = () => {
+    setOpenPostModal(false);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-yellow-50">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow-sm bg-white">
-        <div className="flex items-center space-x-2">
-          <span className="font-bold text-xl text-yellow-700">OwlExchange</span>
-        </div>
+    <Box className="dashboard-wrapper">
+      {/* Header Bar */}
+      <Box className="dashboard-header">
+        <Box className="header-left">
+          <Avatar className="owl-logo">🦉</Avatar>
+          <Box>
+            <Typography variant="h6" className="site-title">
+              OwlExchange
+            </Typography>
+            <Typography variant="caption" className="site-subtitle">
+              Community Donations, Trades & Sales
+            </Typography>
+          </Box>
+        </Box>
 
-        <div className="flex items-center border rounded-full px-3 py-1 bg-gray-50">
-          <input
-            type="text"
+        <Box className="header-center">
+          <TextField
             placeholder="Search donations, trades, sales..."
-            className="bg-transparent outline-none w-64 text-sm"
+            variant="outlined"
+            size="small"
+            className="search-bar"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
           />
-        </div>
+        </Box>
 
-        <button
-          className="border rounded-full px-6 py-2 hover:bg-gray-100"
-          onClick={() => navigate("/login")}
-        >
-          Sign In
-        </button>
-      </nav>
+        <Box className="header-right">
+          <Button
+            variant="contained"
+            className="post-item-btn"
+            startIcon={<AddIcon />}
+            onClick={handleOpenPostModal}
+          >
+            Post Item
+          </Button>
+          <Avatar className="user-avatar">M</Avatar>
+          <Typography variant="body2" className="username">
+            milesmorales23
+          </Typography>
+          <Button
+            variant="outlined"
+            className="sign-out-btn"
+            startIcon={<LogoutIcon />}
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </Button>
+        </Box>
+      </Box>
 
-      {/* Hero Section */}
-      <header className="text-center py-20">
-        <h1 className="text-4xl font-bold">
-          Welcome to <span className="text-yellow-700">OwlExchange</span>
-        </h1>
-        <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Your community platform for sharing, trading, and giving. Connect with neighbors 
-          to donate items, make sustainable swaps, and build a stronger local community.
-        </p>
-        <button
-          className="mt-6 rounded-full px-8 py-3 text-lg bg-yellow-600 text-white hover:bg-yellow-700"
-          onClick={() => navigate("/login")}
-        >
-          Join Our Community
-        </button>
-      </header>
+      {/* Main Content */}
+      <Box className="dashboard-content">
+        <Container maxWidth="lg" className="main-content">
+          {/* Welcome Section */}
+          <Box className="welcome-section">
+            <Typography variant="h2" className="welcome-title">
+              Welcome to <span className="owl-highlight">OwlExchange</span>
+            </Typography>
+            <Typography variant="h6" className="welcome-subtitle">
+              Your community platform for sharing, trading, and giving. Connect with
+              neighbors to donate items, make sustainable swaps, and build a stronger
+              local community.
+            </Typography>
+            <Button
+              variant="contained"
+              className="share-item-btn"
+              startIcon={<GiftIcon />}
+              onClick={handleOpenPostModal}
+            >
+              Share an Item
+            </Button>
+          </Box>
 
-      {/* Feature Cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 px-8 pb-20 max-w-5xl mx-auto">
-        <div className="shadow-md rounded-2xl p-6 text-center bg-white">
-          <h3 className="font-semibold text-lg">Donate & Share</h3>
-          <p className="text-gray-600 text-sm mt-2">
-            Give items a second life by donating to community members who need them.
-          </p>
-        </div>
+          {/* Feature Cards */}
+          <Grid container spacing={3} className="feature-cards">
+            <Grid item xs={12} sm={6} md={4}>
+              <Card className="feature-card">
+                <CardContent>
+                  <Box className="icon-container green">
+                    <GiftIcon className="feature-icon" />
+                  </Box>
+                  <Typography variant="h5" className="feature-title">
+                    Donate & Share
+                  </Typography>
+                  <Typography variant="body1" className="feature-description">
+                    Give items a second life by donating to community members who need them.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-        <div className="shadow-md rounded-2xl p-6 text-center bg-white">
-          <h3 className="font-semibold text-lg">Trade & Exchange</h3>
-          <p className="text-gray-600 text-sm mt-2">
-            Swap items you no longer need for things that bring you joy.
-          </p>
-        </div>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card className="feature-card">
+                <CardContent>
+                  <Box className="icon-container purple">
+                    <SwapIcon className="feature-icon" />
+                  </Box>
+                  <Typography variant="h5" className="feature-title">
+                    Trade & Exchange
+                  </Typography>
+                  <Typography variant="body1" className="feature-description">
+                    Swap items you no longer need for things that bring you joy.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-        <div className="shadow-md rounded-2xl p-6 text-center bg-white">
-          <h3 className="font-semibold text-lg">Build Community</h3>
-          <p className="text-gray-600 text-sm mt-2">
-            Connect with neighbors and create lasting relationships through sustainable exchanges.
-          </p>
-        </div>
-      </section>
-    </div>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card className="feature-card">
+                <CardContent>
+                  <Box className="icon-container blue">
+                    <HeartIcon className="feature-icon" />
+                  </Box>
+                  <Typography variant="h5" className="feature-title">
+                    Build Community
+                  </Typography>
+                  <Typography variant="body1" className="feature-description">
+                    Connect with neighbors and create lasting relationships through sharing.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Post Item Modal */}
+      <PostItem open={openPostModal} onClose={handleClosePostModal} />
+    </Box>
   );
-}
+};
 
-export default LandingPage;
+export default UserDashboard;

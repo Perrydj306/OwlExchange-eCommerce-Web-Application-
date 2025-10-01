@@ -21,88 +21,77 @@ export default function Login() {
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
 
-  // Forgot Password State
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotMessage, setForgotMessage] = useState("");
+    // Forgot Password State
+    const [forgotEmail, setForgotEmail] = useState("");
+    const [forgotMessage, setForgotMessage] = useState("");
 
-  //  Login
-  const handleLogin = async (e) => {
-    e.preventDefault();
+     // Password validation function
+        const validatePassword = (password) => {
+        const minLength = password.length >= 8;
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+        
+        if (!minLength) {
+            return "Password must be at least 8 characters long";
+        }
+        if (!hasNumber) {
+            return "Password must contain at least 1 number";
+        }
+        if (!hasSpecialChar) {
+            return "Password must contain at least 1 special character";
+        }
+        return null; // Valid password
+    };
 
-    if (!email || !password) {
-      setLoginError("Please fill in all fields");
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+         if(!email || !password) {
+        setLoginError("Please fill in all fields")
+        return;
+    }
+
+    // Validate password format
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+            setLoginError(passwordError);
+            return;
+        }
+
+    setLoginError("");
+
+    // Admin login
+    if(email === "admin@owlexchange.com" && password === "Owlexchangeadmin#01") {
+      navigate("/admin"); //Go to AdminPage
       return;
     }
 
-    try {
-      const res = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    // Normal user login
+    alert(`Login request sent for ${email}`)
+    // TODO :Here you would call your backend API to login
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setLoginError("");
+    // Normal user login
+    navigate("/dashboard"); // Redirect to user Dashboard
+    };
 
-        if (data.user.email === "admin@owlexchange.com") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
+    // Handle Register
+    const handleRegister = (e) => {
+        e.preventDefault();
+        if(!firstName || !lastName || !registerEmail || !registerPassword) {
+            setRegisterError("Please fill in all fields");
+            setRegisterSuccess("");
+            return;
         }
-      } else {
-        const errMsg = await res.text();
-        setLoginError(errMsg);
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setLoginError("Server error. Please try again later.");
-    }
-  };
+        setRegisterError("");
+        setRegisterSuccess(`User ${firstName} ${lastName} registered successfully!`);
+        setFirstName("");
+        setLastName("");
+        setRegisterEmail("");
+        setRegisterPassword("");
+        // Here you would call your backend API to register
+    };
 
-  // Register
-  const handleRegister = async (e) => {
-  e.preventDefault();
-
-  if (!firstName || !lastName || !registerEmail || !registerPassword) {
-    setRegisterError("Please fill in all fields");
-    setRegisterSuccess("");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:5000/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: `${firstName} ${lastName}`,
-        email: registerEmail,
-        password: registerPassword,
-      }),
-    });
-
-    if (res.ok) {
-      setRegisterError("");
-      setRegisterSuccess(`User ${firstName} ${lastName} registered successfully!`);
-      setFirstName("");
-      setLastName("");
-      setRegisterEmail("");
-      setRegisterPassword("");
-    } else {
-      const errorData = await res.json();   // read JSON
-      setRegisterError(errorData.error || "Unknown error"); // show DB error
-      setRegisterSuccess("");
-    }
-  } catch (err) {
-    console.error("Register error:", err);
-    setRegisterError("Network/Server error. Please try again later.");
-  }
-};
-
-  // Forgot Password (placeholder for now)
-  const handleForgotPassword = (e) => {
+    const handleForgotPassword = (e) => {
     e.preventDefault();
     if (!forgotEmail) {
       setForgotMessage("Please enter your email");
@@ -139,19 +128,6 @@ export default function Login() {
                   Send Instructions
                 </button>
               </form>
-              <p style={{ textAlign: "center", marginTop: "1rem" }}>
-                <button
-                  onClick={() => setIsForgot(false)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#007bff",
-                    cursor: "pointer",
-                  }}
-                >
-                  Back to Login
-                </button>
-              </p>
             </>
           ) : (
             <>
@@ -273,6 +249,14 @@ export default function Login() {
             </p>
           </>
         )}
+        <p className="back-landing-wrapper">
+                <button
+                  onClick={() => navigate("/")}
+                  className="back-landing-btn"
+                >
+                  Back to Home
+                </button>
+              </p>
       </div>
     </div>
   );
