@@ -1,84 +1,121 @@
-import React, {useState} from "react";
-import { useNavigate } from "react-router-dom"; // Import navigation
-import "./Login.css"; // import the css file
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 export default function Login() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate(); // Create navigate function
+  const [isLogin, setIsLogin] = useState(true);
+  const [isForgot, setIsForgot] = useState(false);
 
-    const [isLogin, setIsLogin] = useState(true);
-    const [isForgot, setIsForgot] = useState(false);
+  // Login State
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
-    // Login State
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loginError, setLoginError] = useState("");
+  // Register State
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState("");
 
-    // Register State
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [registerEmail, setRegisterEmail] = useState("");
-    const [registerPassword, setRegisterPassword] = useState("");
-    const [registerError, setRegisterError] = useState("");
-    const [registerSuccess, setRegisterSuccess] = useState("");
+  // Forgot Password State
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMessage, setForgotMessage] = useState("");
 
-    // Forgot Password State
-    const [forgotEmail, setForgotEmail] = useState("");
-    const [forgotMessage, setForgotMessage] = useState("");
+  //  Login
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-
-         if(!email || !password) {
-        setLoginError("Please fill in all fields")
-        return;
-    }
-
-    setLoginError("");
-
-    // Admin login
-    if(email === "admin@owlexchange.com" && password === "Owlexchangeadmin#01") {
-      navigate("/admin"); //Go to AdminPage
+    if (!email || !password) {
+      setLoginError("Please fill in all fields");
       return;
     }
 
-    // Normal user login
-    alert(`Login request sent for ${email}`)
-    // TODO :Here you would call your backend API to login
+    try {
+      const res = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Normal user login
-    navigate("/dashboard"); // Redirect to user Dashboard
-    };
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setLoginError("");
 
-    // Handle Register
-    const handleRegister = (e) => {
-        e.preventDefault();
-        if(!firstName || !lastName || !registerEmail || !registerPassword) {
-            setRegisterError("Please fill in all fields");
-            setRegisterSuccess("");
-            return;
+        if (data.user.email === "admin@owlexchange.com") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
         }
-        setRegisterError("");
-        setRegisterSuccess(`User ${firstName} ${lastName} registered successfully!`);
-        setFirstName("");
-        setLastName("");
-        setRegisterEmail("");
-        setRegisterPassword("");
-        // Here you would call your backend API to register
-    };
+      } else {
+        const errMsg = await res.text();
+        setLoginError(errMsg);
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setLoginError("Server error. Please try again later.");
+    }
+  };
 
-    const handleForgotPassword = (e) => {
+  // Register
+  const handleRegister = async (e) => {
+  e.preventDefault();
+
+  if (!firstName || !lastName || !registerEmail || !registerPassword) {
+    setRegisterError("Please fill in all fields");
+    setRegisterSuccess("");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: `${firstName} ${lastName}`,
+        email: registerEmail,
+        password: registerPassword,
+      }),
+    });
+
+    if (res.ok) {
+      setRegisterError("");
+      setRegisterSuccess(`User ${firstName} ${lastName} registered successfully!`);
+      setFirstName("");
+      setLastName("");
+      setRegisterEmail("");
+      setRegisterPassword("");
+    } else {
+      const errorData = await res.json();   // read JSON
+      setRegisterError(errorData.error || "Unknown error"); // show DB error
+      setRegisterSuccess("");
+    }
+  } catch (err) {
+    console.error("Register error:", err);
+    setRegisterError("Network/Server error. Please try again later.");
+  }
+};
+
+  // Forgot Password (placeholder for now)
+  const handleForgotPassword = (e) => {
     e.preventDefault();
     if (!forgotEmail) {
       setForgotMessage("Please enter your email");
       return;
     }
-    setForgotMessage(`If an account exists for ${forgotEmail}, instructions to reset your password have been sent.`);
+    setForgotMessage(
+      `If an account exists for ${forgotEmail}, instructions to reset your password have been sent.`
+    );
     setForgotEmail("");
-    // Here you would call your backend API to initiate password reset
   };
 
-    return (
+  // Main Return
+  return (
     <div className="login-container">
       <div className="login-card">
         {isLogin ? (
@@ -98,12 +135,19 @@ export default function Login() {
                     placeholder="Enter your email"
                   />
                 </div>
-                <button type="submit" className="login-btn">Send Instructions</button>
+                <button type="submit" className="login-btn">
+                  Send Instructions
+                </button>
               </form>
               <p style={{ textAlign: "center", marginTop: "1rem" }}>
                 <button
                   onClick={() => setIsForgot(false)}
-                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#007bff",
+                    cursor: "pointer",
+                  }}
                 >
                   Back to Login
                 </button>
@@ -132,12 +176,19 @@ export default function Login() {
                     placeholder="Enter your password"
                   />
                 </div>
-                <button type="submit" className="login-btn">Login</button>
+                <button type="submit" className="login-btn">
+                  Login
+                </button>
               </form>
               <p style={{ textAlign: "center", marginTop: "0.5rem" }}>
                 <button
                   onClick={() => setIsForgot(true)}
-                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#007bff",
+                    cursor: "pointer",
+                  }}
                 >
                   Forgot Password?
                 </button>
@@ -146,7 +197,12 @@ export default function Login() {
                 Don't have an account?{" "}
                 <button
                   onClick={() => setIsLogin(false)}
-                  style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#007bff",
+                    cursor: "pointer",
+                  }}
                 >
                   New User
                 </button>
@@ -157,7 +213,9 @@ export default function Login() {
           <>
             <h2 className="login-title">Register New User</h2>
             {registerError && <p className="error">{registerError}</p>}
-            {registerSuccess && <p style={{ color: "green", textAlign: "center" }}>{registerSuccess}</p>}
+            {registerSuccess && (
+              <p style={{ color: "green", textAlign: "center" }}>{registerSuccess}</p>
+            )}
             <form onSubmit={handleRegister}>
               <div className="form-group">
                 <label>First Name</label>
@@ -195,13 +253,20 @@ export default function Login() {
                   placeholder="Enter your password"
                 />
               </div>
-              <button type="submit" className="login-btn">Register</button>
+              <button type="submit" className="login-btn">
+                Register
+              </button>
             </form>
             <p style={{ textAlign: "center", marginTop: "1rem" }}>
               Already have an account?{" "}
               <button
                 onClick={() => setIsLogin(true)}
-                style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#007bff",
+                  cursor: "pointer",
+                }}
               >
                 Login here
               </button>
