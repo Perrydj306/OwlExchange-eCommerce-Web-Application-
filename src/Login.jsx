@@ -91,8 +91,8 @@ export default function Login() {
         setRegisterEmail("");
         setRegisterPassword("");
       } else {
-        const errorData = await res.json();
-        setRegisterError(errorData.error || "Unknown error");
+        const errMsg = await res.text();
+        setRegisterError(errMsg || "Unknown error");
         setRegisterSuccess("");
       }
     } catch (err) {
