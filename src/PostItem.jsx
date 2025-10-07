@@ -49,12 +49,30 @@ const PostItem = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log('Form data:', formData);
-    console.log('Transaction type:', transactionType);
-    onClose();
-  };
+  const handleSubmit = async () => {
+  try {
+    //Send a POST request to backend API
+    const response = await fetch("http://localhost:5000/api/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,   //includes title, descripton, etc.
+        transactionType, //adds which tab (sell, trade, donate)
+      }),
+    });
+  
+    //if server responds successfully
+    if (response.ok) {
+      alert("Item posted successfully!");
+      onClose();
+    } else {
+      alert("Failed to post item.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Server connection failed.");
+  }
+};
 
   return (
     <Dialog 
