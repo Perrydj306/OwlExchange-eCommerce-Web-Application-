@@ -38,22 +38,27 @@ app.post("/api/users", async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-     console.log("Attempting insert:", { username, email, hashedPassword });
-
-    const result = await sql.query`
+    await sql.query`
       INSERT INTO Users (username, email, password)
-      OUTPUT INSERTED.*
       VALUES (${username}, ${email}, ${hashedPassword})
     `;
 
-    console.log("User inserted:", result.recordset[0]);
-
-    res.status(201).json({ message: "User created successfully", user: result.recordset[0] });
+    res.status(201).send("User created successfully");
   } catch (err) {
-    console.error("SQL Insert Error:", err);  // shows full details in terminal
-    res.status(500).json({ error: err.message, details: err });
+    console.error("Error adding user:", err);
+
+  // Check both top-level and nested error numbers
+  const errorNumber = err.number || (err.originalError && err.originalError.info && err.originalError.info.number);
+
+  if (errorNumber === 2627) {
+    return res.status(400).send("Email already registered. Please use another one.");
   }
+
+  res.status(500).send("Server error during registration.");
+}
+
 });
+
 
 // Login user
 app.post("/api/login", async (req, res) => {
