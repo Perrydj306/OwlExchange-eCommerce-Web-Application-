@@ -86,7 +86,7 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).send("Invalid email or password");
     }
 
-    // Generate JWT
+    // Generate JWT (authenthication token)
     const token = jwt.sign(
       { id: user.id, email: user.email },
       SECRET_KEY,
@@ -103,6 +103,10 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+//Connecting to item route integration
+app.use("/api/items", require("./routes/itemRoutes"));
+
+//start the server
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
