@@ -139,17 +139,14 @@ export default function Login() {
                   Send Instructions
                 </button>
               </form>
-              <p style={{ textAlign: "center", marginTop: "1rem" }}>
-                <button
-                  onClick={() => setIsForgot(false)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#007bff",
-                    cursor: "pointer",
-                  }}
-                >
+              <p className="back-landing-wrapper">
+                <button onClick={() => setIsForgot(false)} className="back-landing-btn">
                   Back to Login
+                </button>
+              </p>
+              <p className="back-landing-wrapper">
+                <button onClick={() => navigate("/")} className="back-landing-btn">
+                  Back to Home
                 </button>
               </p>
             </>
@@ -205,6 +202,11 @@ export default function Login() {
                   }}
                 >
                   New User
+                </button>
+              </p>
+              <p className="back-landing-wrapper">
+                <button onClick={() => navigate("/")} className="back-landing-btn">
+                  ← Back to Landing Page
                 </button>
               </p>
             </>
@@ -271,10 +273,23 @@ export default function Login() {
                 Login here
               </button>
             </p>
+            <p style={{ textAlign: "center", marginTop: "0.5rem" }}>
+              <button
+                onClick={() => navigate("/")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#007bff",
+                  cursor: "pointer",
+                  textDecoration: "underline"
+                }}
+              >
+                ← Back to Landing Page
+              </button>
+            </p>
           </>
         )}
       </div>
     </div>
   );
 }
-
