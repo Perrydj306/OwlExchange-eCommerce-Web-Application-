@@ -206,7 +206,7 @@ export default function Login() {
               </p>
               <p className="back-landing-wrapper">
                 <button onClick={() => navigate("/")} className="back-landing-btn">
-                  ← Back to Landing Page
+                  Back to Home
                 </button>
               </p>
             </>
@@ -284,7 +284,7 @@ export default function Login() {
                   textDecoration: "underline"
                 }}
               >
-                ← Back to Landing Page
+                Back to Home
               </button>
             </p>
           </>
