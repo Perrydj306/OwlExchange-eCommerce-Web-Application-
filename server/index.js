@@ -38,12 +38,20 @@ app.post("/api/users", async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await sql.query`
-      INSERT INTO Users (username, email, password)
-      VALUES (${username}, ${email}, ${hashedPassword})
-    `;
-
-    res.status(201).send("User created successfully");
+    // Check if user is an admin
+    if (email.endsWith("@admin.com")) {
+      await sql.query`
+        INSERT INTO Admins (username, email, password)
+        VALUES (${username}, ${email}, ${hashedPassword})
+      `;
+      return res.status(201).send("Admin account created successfully");
+    } else {
+      await sql.query`
+        INSERT INTO Users (username, email, password)
+        VALUES (${username}, ${email}, ${hashedPassword})
+      `;
+      return res.status(201).send("User created successfully");
+    }
   } catch (err) {
     console.error("Error adding user:", err);
 
@@ -54,7 +62,8 @@ app.post("/api/users", async (req, res) => {
     return res.status(400).send("Email already registered. Please use another one.");
   }
 
-  res.status(500).send("Server error during registration.");
+  console.error("Registration error:", err);
+  res.status(500).json({ message: "Server error during registration", error: err.message });
 }
 
 });
