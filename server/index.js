@@ -38,21 +38,17 @@ app.post("/api/users", async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Check if user is an admin
-    if (email.endsWith("@admin.com")) {
-      await sql.query`
-        INSERT INTO Admins (username, email, password)
-        VALUES (${username}, ${email}, ${hashedPassword})
-      `;
-      return res.status(201).send("Admin account created successfully");
-    } else {
-      await sql.query`
-        INSERT INTO Users (username, email, password)
-        VALUES (${username}, ${email}, ${hashedPassword})
-      `;
-      return res.status(201).send("User created successfully");
-    }
-  } catch (err) {
+    // Determine role based on email domain
+    const emailDomain = email.split("@")[1];
+    const role = emailDomain === "owladmin.com" ? "Admin" : "User";
+
+    await sql.query`
+      INSERT INTO Users (username, email, password, role)
+      VALUES (${username}, ${email}, ${hashedPassword}, ${role})
+    `;
+    return res.status(201).send("User created successfully");
+  }
+   catch (err) {
     console.error("Error adding user:", err);
 
   // Check both top-level and nested error numbers
