@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -25,12 +25,22 @@ import PostItem from './PostItem';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null); //store log in user info
   const [openPostModal, setOpenPostModal] = useState(false);
 
+useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user")); //get user from local storage
+  if (storedUser) {
+    setCurrentUser(storedUser); //set user data in state
+  }
+}, []);
+
   const handleSignOut = () => {
-    // Add any sign out logic here (clear tokens, etc.)
-    navigate('/');
-  };
+  localStorage.removeItem("token"); //clear token on sign out
+  localStorage.removeItem("user"); // clear stored user info
+  navigate('/'); //return to home page
+};
+
 
   const handleOpenPostModal = () => {
     setOpenPostModal(true);
@@ -81,9 +91,11 @@ const UserDashboard = () => {
           >
             Post Item
           </Button>
-          <Avatar className="user-avatar">M</Avatar>
-          <Typography variant="body2" className="username">
-            milesmorales23
+          <Avatar className="user-avatar">
+          {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"} </Avatar>
+
+          <Typography variant="body2" className="username"> 
+            {currentUser ? currentUser.email.split("@")[0]: "Loading..."}
           </Typography>
           <Button
             variant="outlined"
