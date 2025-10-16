@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
+
+  // Popup control
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupKey, setPopupKey] = useState(0); // forces remount to restart CSS animation
+  const popupTimerRef = useRef(null);
+  const POPUP_MS = 5000; // show for 5 seconds
+
+  const triggerPopup = () => {
+    // clear any running timer
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+
+    // unmount then remount popup to restart animation
+    setShowPopup(false);
+    // next frame -> remount
+    requestAnimationFrame(() => {
+      setPopupKey((k) => k + 1);
+      setShowPopup(true);
+      popupTimerRef.current = setTimeout(() => setShowPopup(false), POPUP_MS);
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    };
+  }, []);
 
   return (
     <div 
@@ -27,20 +53,33 @@ function LandingPage() {
       {/* Navbar */}
       <nav className="navbar">
         <div className="logo">OwlExchange</div>
-        
+
+        {/* Search (locked for guests) */}
         <input
           type="text"
           placeholder="Search donations, trades, sales..."
           className="search"
+          onClick={triggerPopup}              // show every click
+          onFocus={triggerPopup}              // first focus
+          onKeyDown={(e) => {                 // Enter key
+            if (e.key === "Enter") {
+              e.preventDefault();
+              triggerPopup();
+            }
+          }}
         />
-        
-        <button
-          className="signin-btn"
-          onClick={() => navigate("/login")}
-        >
+
+        <button className="signin-btn" onClick={() => navigate("/login")}>
           Sign In
         </button>
       </nav>
+
+      {/* Centered Popup */}
+      {showPopup && (
+        <div className="popup-center" key={popupKey}>
+          🔒 Please sign in to search items.
+        </div>
+      )}
 
       {/* Hero Section */}
       <header className="hero">
@@ -52,10 +91,7 @@ function LandingPage() {
           neighbors to donate items, make sustainable swaps, and build a stronger
           local community.
         </p>
-        <button
-          className="join-btn"
-          onClick={() => navigate("/login")}
-        >
+        <button className="join-btn" onClick={() => navigate("/login")}>
           Join Our Community
         </button>
       </header>
@@ -65,25 +101,19 @@ function LandingPage() {
         <div className="card">
           <span className="card-icon">🎁</span>
           <h3>Donate & Share</h3>
-          <p>
-            Give items a second life by donating to community members who need them.
-          </p>
+          <p>Give items a second life by donating to community members who need them.</p>
         </div>
 
         <div className="card">
           <span className="card-icon">🔄</span>
           <h3>Trade & Exchange</h3>
-          <p>
-            Swap items you no longer need for things that bring you joy.
-          </p>
+          <p>Swap items you no longer need for things that bring you joy.</p>
         </div>
 
         <div className="card">
           <span className="card-icon">👥</span>
           <h3>Build Community</h3>
-          <p>
-            Connect with neighbors and create lasting relationships through sustainable exchanges.
-          </p>
+          <p>Connect with neighbors and create lasting relationships through sustainable exchanges.</p>
         </div>
       </section>
 
@@ -94,17 +124,14 @@ function LandingPage() {
             <div className="stat-number orange">500+</div>
             <div className="stat-label">Items Shared</div>
           </div>
-          
           <div className="stat-item">
             <div className="stat-number green">200+</div>
             <div className="stat-label">Community Members</div>
           </div>
-          
           <div className="stat-item">
             <div className="stat-number purple">150+</div>
             <div className="stat-label">Successful Trades</div>
           </div>
-          
           <div className="stat-item">
             <div className="stat-number blue">100+</div>
             <div className="stat-label">Free Donations</div>
@@ -112,24 +139,27 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Community Exchange Section */}
+      {/* Community Exchange */}
       <section className="community-section">
         <h2 className="community-title">Community Exchange</h2>
         <p className="community-description">
           Discover amazing items shared, traded, and sold by your neighbors
         </p>
-        
+
         <div className="community-search">
           <input
             type="text"
             placeholder="Search items, descriptions, tags..."
             className="community-search-input"
+            onClick={triggerPopup}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                triggerPopup();
+              }
+            }}
           />
-          
-          <button
-            className="browse-btn"
-            onClick={() => navigate("/marketplace")}
-          >
+          <button className="browse-btn" onClick={() => navigate("/marketplace")}>
             Browse Community Items
           </button>
         </div>
