@@ -112,3 +112,30 @@ body,html, #root {
   color: #0056b3;
   text-decoration: underline;
 }
+
+.popup-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff8e1;
+  color: #4a3c00;
+  border: 1px solid #ffcc80;
+  border-radius: 12px;
+  padding: 18px 26px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
+  text-align: center;
+  animation: fadeInOutCenter 5s ease forwards; /* 5s */
+  z-index: 9999;
+}
+
+@keyframes fadeInOutCenter {
+  0%   { opacity: 0; transform: translate(-50%, -60%); }
+  8%   { opacity: 1; transform: translate(-50%, -50%); }
+  92%  { opacity: 1; transform: translate(-50%, -50%); }
+  100% { opacity: 0; transform: translate(-50%, -40%); }
+}
+
+
