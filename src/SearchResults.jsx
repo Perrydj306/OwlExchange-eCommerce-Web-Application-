@@ -23,6 +23,7 @@ const categories = [
   "School Supplies",
   "Clothing",
   "Household",
+  "Other",
 ];
 
 const SearchResults = () => {
