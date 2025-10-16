@@ -25,29 +25,31 @@ import PostItem from './PostItem';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null); //store log in user info
+  const [currentUser, setCurrentUser] = useState(null); // Store logged-in user info
   const [openPostModal, setOpenPostModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Track what's typed in search
 
-useEffect(() => {
-  const storedUser = JSON.parse(localStorage.getItem("user")); //get user from local storage
-  if (storedUser) {
-    setCurrentUser(storedUser); //set user data in state
-  }
-}, []);
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user")); // Get user from local storage
+    if (storedUser) {
+      setCurrentUser(storedUser); // Set user data in state
+    }
+  }, []);
 
   const handleSignOut = () => {
-  localStorage.removeItem("token"); //clear token on sign out
-  localStorage.removeItem("user"); // clear stored user info
-  navigate('/'); //return to home page
-};
-
-
-  const handleOpenPostModal = () => {
-    setOpenPostModal(true);
+    localStorage.removeItem("token"); // Clear token on sign out
+    localStorage.removeItem("user"); // Clear stored user info
+    navigate('/'); // Return to home page
   };
 
-  const handleClosePostModal = () => {
-    setOpenPostModal(false);
+  const handleOpenPostModal = () => setOpenPostModal(true);
+  const handleClosePostModal = () => setOpenPostModal(false);
+
+  // 🔍 Handle search submit
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter" && searchTerm.trim() !== "") {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
   };
 
   return (
@@ -72,6 +74,9 @@ useEffect(() => {
             variant="outlined"
             size="small"
             className="search-bar"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleSearchKeyDown} // 👈 Navigate on Enter
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -91,12 +96,17 @@ useEffect(() => {
           >
             Post Item
           </Button>
-          <Avatar className="user-avatar">
-          {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"} </Avatar>
 
-          <Typography variant="body2" className="username"> 
-            {currentUser ? currentUser.email.split("@")[0]: "Loading..."}
+          {/* User avatar with first letter of email */}
+          <Avatar className="user-avatar">
+            {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
+          </Avatar>
+
+          {/* Username before @ */}
+          <Typography variant="body2" className="username">
+            {currentUser ? currentUser.email.split("@")[0] : "Loading..."}
           </Typography>
+
           <Button
             variant="outlined"
             className="sign-out-btn"
