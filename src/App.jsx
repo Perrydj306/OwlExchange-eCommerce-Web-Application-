@@ -4,6 +4,7 @@ import Login from "./Login";
 import AdminPage from "./AdminPage";
 import UserDashboard from "./UserDashboard";
 import LandingPage from "./LandingPage";
+import SearchResults from "./SearchResults";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminPage />} /> {/* ✅ Admin route */}
         <Route path="/dashboard" element={<UserDashboard />} /> {/* ✅ User page */}
+        <Route path="/search" element={<SearchResults />} /> {/* New route */}
       </Routes>
     </Router>
   );
