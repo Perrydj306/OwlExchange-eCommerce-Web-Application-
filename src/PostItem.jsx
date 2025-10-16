@@ -170,9 +170,9 @@ const PostItem = ({ open, onClose }) => {
                   <MenuItem value="textbooks">Textbooks</MenuItem>
                   <MenuItem value="electronics">Electronics</MenuItem>
                   <MenuItem value="furniture">Dorm Essentials</MenuItem>
-                  <MenuItem value="clothing">School Supplies</MenuItem>
-                  <MenuItem value="other">Clothing</MenuItem>
-                  <MenuItem value="other">Household</MenuItem>
+                  <MenuItem value="school supplies">School Supplies</MenuItem>
+                  <MenuItem value="clothing">Clothing</MenuItem>
+                  <MenuItem value="household">Household</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
                 </Select>
               </FormControl>
