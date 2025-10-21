@@ -6,7 +6,6 @@ export default function AdminPage() {
     const [filterStatus, setFilterStatus] = useState("All Items");
 
     const handleLogout = () => {
-        // Navigate to home or login page
         window.location.href = "/";
     };
 
@@ -58,10 +57,112 @@ export default function AdminPage() {
         }
     ];
 
+    const users = [
+        {
+            id: 1,
+            name: "Sarah Johnson",
+            email: "sarah.johnson@community.local",
+            studentId: "CU001",
+            itemsPosted: 5,
+            trustScore: 95,
+            status: "active"
+        },
+        {
+            id: 2,
+            name: "Mike Chen",
+            email: "mike.chen@community.local",
+            studentId: "CU002",
+            itemsPosted: 3,
+            trustScore: 87,
+            status: "active"
+        },
+        {
+            id: 3,
+            name: "Lisa Rodriguez",
+            email: "lisa.rodriguez@community.local",
+            studentId: "CU003",
+            itemsPosted: 8,
+            trustScore: 92,
+            status: "active"
+        },
+        {
+            id: 4,
+            name: "David Park",
+            email: "david.park@community.local",
+            studentId: "CU004",
+            itemsPosted: 2,
+            trustScore: 88,
+            status: "active"
+        },
+        {
+            id: 5,
+            name: "Jessica Lee",
+            email: "jessica.lee@community.local",
+            studentId: "CU005",
+            itemsPosted: 4,
+            trustScore: 91,
+            status: "active"
+        }
+    ];
+
+    const reports = [
+        {
+            id: 1,
+            itemTitle: "Vintage Wooden Coffee Table",
+            reportedBy: "Anonymous User",
+            date: "1/15/2024",
+            reason: "Spam/Scam",
+            description: "This item seems overpriced and the photos look like stock images",
+            status: "pending"
+        },
+        {
+            id: 2,
+            userReported: "Mike Chen",
+            reportedBy: "Community Member",
+            date: "1/14/2024",
+            reason: "Inappropriate behavior",
+            description: "User was unresponsive and didn't show up for arranged pickup",
+            status: "pending"
+        },
+        {
+            id: 3,
+            itemTitle: "Kitchen Appliances - Looking to Trade",
+            reportedBy: "Sarah Johnson",
+            date: "1/13/2024",
+            reason: "Misleading information",
+            description: "Item condition doesn't match description - appliances show significant wear",
+            status: "pending"
+        }
+    ];
+
     const filteredItems = items.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.seller.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleSuspendUser = (userId) => {
+        console.log("Suspend user:", userId);
+    };
+
+    const handleBanUser = (userId) => {
+        console.log("Ban user:", userId);
+    };
+
+    const handleEditUser = (userId) => {
+        console.log("Edit user:", userId);
+    };
+
+    const handleReviewReport = (reportId) => {
+        console.log("Review report:", reportId);
+    };
+
+    const handleDismissReport = (reportId) => {
+        console.log("Dismiss report:", reportId);
+    };
+
+    const handleTakeAction = (reportId) => {
+        console.log("Take action on report:", reportId);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -211,7 +312,7 @@ export default function AdminPage() {
                                             <td className="py-4 px-4 text-gray-700">{item.category}</td>
                                             <td className="py-4 px-4">
                                                 <span className={item.price === "FREE" ? "text-green-600 font-medium" : "text-gray-900"}>
-                                                    {item.price === "FREE" ? "FREE" : item.price}
+                                                    {item.price === "FREE" ? "FREE" : `$${item.price}`}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-4">
@@ -238,8 +339,126 @@ export default function AdminPage() {
                     </div>
                 )}
 
+                {/* User Management Content */}
+                {activeTab === "users" && (
+                    <div className="bg-white rounded-lg shadow-sm p-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6">User Management</h2>
+                        
+                        {/* Users Table */}
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-gray-200">
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Name</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Email</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Student ID</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Items Posted</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Trust Score</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Status</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map((user) => (
+                                        <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                            <td className="py-4 px-4 font-medium text-gray-900">{user.name}</td>
+                                            <td className="py-4 px-4 text-gray-700">{user.email}</td>
+                                            <td className="py-4 px-4 text-gray-700">{user.studentId}</td>
+                                            <td className="py-4 px-4 text-gray-700">{user.itemsPosted}</td>
+                                            <td className="py-4 px-4">
+                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                                    {user.trustScore}%
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                                    {user.status}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <div className="flex gap-2 items-center">
+                                                    <button
+                                                        onClick={() => handleEditUser(user.id)}
+                                                        className="text-gray-600 hover:text-gray-900 p-1"
+                                                        title="Edit User"
+                                                    >
+                                                        🔗
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleSuspendUser(user.id)}
+                                                        className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                                    >
+                                                        Suspend
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleBanUser(user.id)}
+                                                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
+                                                    >
+                                                        Ban
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* Reports Content */}
+                {activeTab === "reports" && (
+                    <div className="bg-white rounded-lg shadow-sm p-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6">Reports & Flags</h2>
+                        
+                        {/* Reports List */}
+                        <div className="space-y-4">
+                            {reports.map((report) => (
+                                <div key={report.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                                {report.itemTitle || report.userReported}
+                                            </h3>
+                                            <p className="text-sm text-gray-600">
+                                                Reported by {report.reportedBy} • {report.date}
+                                            </p>
+                                        </div>
+                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                            {report.reason}
+                                        </span>
+                                    </div>
+                                    
+                                    <p className="text-gray-700 mb-4">{report.description}</p>
+                                    
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => handleReviewReport(report.id)}
+                                            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800"
+                                        >
+                                            Review
+                                        </button>
+                                        <button
+                                            onClick={() => handleDismissReport(report.id)}
+                                            className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                        >
+                                            Dismiss
+                                        </button>
+                                        <button
+                                            onClick={() => handleTakeAction(report.id)}
+                                            className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
+                                        >
+                                            Take Action
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Other Tabs Placeholder */}
-                {activeTab !== "items" && (
+                {activeTab !== "items" && activeTab !== "users" && activeTab !== "reports" && (
                     <div className="bg-white rounded-lg shadow-sm p-12 text-center">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">
                             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management
