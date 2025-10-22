@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
       tags,
       contactMethod,
       transactionType,
-      imageUrl, // properly pulled from req.body
+      imageUrl,
     } = req.body;
 
     const request = new sql.Request();
@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     request.input("tags", sql.VarChar(255), tags);
     request.input("contactMethod", sql.VarChar(100), contactMethod);
     request.input("transactionType", sql.Int, transactionType);
-    request.input("imageUrl", sql.VarChar(500), imageUrl || null); // now correctly declared
+    request.input("imageUrl", sql.VarChar(500), imageUrl || null);
 
     await request.query(`
       INSERT INTO Items 
@@ -63,32 +63,23 @@ router.post("/", async (req, res) => {
   }
 });
 
-  // ===== Get All Items =====
+// ===== Get All Items =====
 router.get("/", async (req, res) => {
   try {
     const result = await sql.query(`
       SELECT 
-        id,
-        title,
-        description,
-        category,
-        condition,
-        price,
-        tags,
-        contactMethod,
-        transactionType,
-        imageUrl,
-        createdAt
+        id, title, description, category, condition, price, tags, contactMethod,
+        transactionType, imageUrl, createdAt
       FROM Items
       ORDER BY createdAt DESC
     `);
-
     res.json(result.recordset);
   } catch (err) {
     console.error("Error fetching items:", err);
     res.status(500).json({ error: "Failed to fetch items" });
   }
 });
+
 
 // ===== Search Items (keyword, category, transaction type) =====
 router.get("/search", async (req, res) => {
@@ -97,32 +88,20 @@ router.get("/search", async (req, res) => {
   try {
     let query = `
       SELECT 
-        id,
-        title,
-        description,
-        category,
-        condition,
-        price,
-        tags,
-        contactMethod,
-        transactionType,
-        imageUrl,
-        createdAt
+        id, title, description, category, condition, price, tags, contactMethod,
+        transactionType, imageUrl, createdAt
       FROM Items
       WHERE 1=1
     `;
 
-    // Search keyword (title or description)
     if (keyword) {
       query += ` AND (title LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`;
     }
 
-    // Filter by category (skip "All")
     if (category && category.toLowerCase() !== "all") {
       query += ` AND LOWER(category) = '${category.toLowerCase()}'`;
     }
 
-    // Filter by transactionType (0 = Sell, 1 = Trade, 2 = Donate)
     if (transactionType && transactionType !== "All" && transactionType !== "all") {
       query += ` AND transactionType = ${transactionType}`;
     }
@@ -135,7 +114,20 @@ router.get("/search", async (req, res) => {
     console.error("Error fetching search results:", err);
     res.status(500).json({ error: "Failed to fetch search results" });
   }
-});
 
+  // ===== Get Single Item by ID =====
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await sql.query`SELECT * FROM Items WHERE id = ${id}`;
+    if (result.recordset.length === 0)
+      return res.status(404).json({ message: "Item not found" });
+    res.json(result.recordset[0]);
+  } catch (err) {
+    console.error("Error fetching item:", err);
+    res.status(500).json({ error: "Failed to fetch item" });
+  }
+});
+});
 
 module.exports = router;

@@ -134,7 +134,11 @@ const SearchResults = () => {
         <Grid container spacing={3} className="results-grid">
           {items.map((item) => (
             <Grid item xs={12} sm={6} md={4} key={item.id}>
-              <Card className="result-card">
+               <Card
+                  className="result-card"
+                  onClick={() => navigate(`/item/${item.id}`)}
+                  style={{ cursor: "pointer" }}
+                >
                 {item.imageUrl ? (
                   <CardMedia
                     component="img"
