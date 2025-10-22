@@ -11,10 +11,8 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   Tabs,
-  Tab,
-  Chip
+  Tab
 } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -34,7 +32,8 @@ const PostItem = ({ open, onClose }) => {
     condition: '',
     price: '',
     tags: '',
-    contactMethod: 'KSU Email Only'
+    contactMethod: 'KSU Email Only',
+    imageUrl: ''
   });
 
   const handleTabChange = (event, newValue) => {
@@ -49,30 +48,54 @@ const PostItem = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = async () => {
-  try {
-    //Send a POST request to backend API
-    const response = await fetch("http://localhost:5000/api/items", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...formData,   //includes title, descripton, etc.
-        transactionType, //adds which tab (sell, trade, donate)
-      }),
-    });
-  
-    //if server responds successfully
-    if (response.ok) {
-      alert("Item posted successfully!");
-      onClose();
-    } else {
-      alert("Failed to post item.");
+  // 🖼️ Handle image uploads
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append("image", file);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/items/upload", {
+        method: "POST",
+        body: uploadData,
+      });
+      const data = await res.json();
+      if (data.imageUrl) {
+        setFormData((prev) => ({ ...prev, imageUrl: data.imageUrl }));
+        alert("Photo uploaded successfully!");
+      } else {
+        alert("Upload failed. Try again.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload image");
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Server connection failed.");
-  }
-};
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          transactionType,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Item posted successfully!");
+        onClose();
+      } else {
+        alert("Failed to post item.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Server connection failed.");
+    }
+  };
 
   return (
     <Dialog 
@@ -86,10 +109,7 @@ const PostItem = ({ open, onClose }) => {
         <Typography variant="h5" className="modal-title">
           Post an Item
         </Typography>
-        <IconButton
-          onClick={onClose}
-          className="close-button"
-        >
+        <IconButton onClick={onClose} className="close-button">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -101,21 +121,9 @@ const PostItem = ({ open, onClose }) => {
           onChange={handleTabChange}
           className="transaction-tabs"
         >
-          <Tab 
-            icon={<MoneyIcon />} 
-            label="Sell Item" 
-            className="tab-button"
-          />
-          <Tab 
-            icon={<SwapIcon />} 
-            label="Trade/Exchange" 
-            className="tab-button"
-          />
-          <Tab 
-            icon={<GiftIcon />} 
-            label="Donate (Free)" 
-            className="tab-button"
-          />
+          <Tab icon={<MoneyIcon />} label="Sell Item" className="tab-button" />
+          <Tab icon={<SwapIcon />} label="Trade/Exchange" className="tab-button" />
+          <Tab icon={<GiftIcon />} label="Donate (Free)" className="tab-button" />
         </Tabs>
 
         {/* Form Fields */}
@@ -226,12 +234,23 @@ const PostItem = ({ open, onClose }) => {
             </Typography>
             <Button
               variant="outlined"
-              className="upload-button"
+              component="label"
               startIcon={<UploadIcon />}
-              fullWidth
             >
-              Upload Photo (Demo)
+              Upload Photo
+              <input type="file" hidden accept="image/*" onChange={handleFileUpload} />
             </Button>
+
+            {/* Image Preview */}
+            {formData.imageUrl && (
+              <Box mt={2} textAlign="center">
+                <img
+                  src={formData.imageUrl}
+                  alt="Uploaded preview"
+                  style={{ width: "150px", borderRadius: "8px", marginTop: "10px" }}
+                />
+              </Box>
+            )}
           </Box>
 
           {/* Tags */}
@@ -239,20 +258,15 @@ const PostItem = ({ open, onClose }) => {
             <Typography variant="body2" className="field-label">
               Tags (optional)
             </Typography>
-            <Box className="tags-container">
-              <TextField
-                fullWidth
-                name="tags"
-                placeholder="Add tags (e.g., urgent, negotiable)"
-                value={formData.tags}
-                onChange={handleInputChange}
-                variant="outlined"
-                size="small"
-              />
-              <Button variant="contained" className="add-tag-button">
-                Add
-              </Button>
-            </Box>
+            <TextField
+              fullWidth
+              name="tags"
+              placeholder="Add tags (e.g., urgent, negotiable)"
+              value={formData.tags}
+              onChange={handleInputChange}
+              variant="outlined"
+              size="small"
+            />
           </Box>
 
           {/* Preferred Contact Method */}
@@ -275,18 +289,10 @@ const PostItem = ({ open, onClose }) => {
 
           {/* Action Buttons */}
           <Box className="action-buttons">
-            <Button
-              variant="outlined"
-              onClick={onClose}
-              className="cancel-button"
-            >
+            <Button variant="outlined" onClick={onClose} className="cancel-button">
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              className="post-button"
-            >
+            <Button variant="contained" onClick={handleSubmit} className="post-button">
               Post Item
             </Button>
           </Box>

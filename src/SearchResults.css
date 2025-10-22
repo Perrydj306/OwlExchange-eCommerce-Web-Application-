@@ -1,10 +1,12 @@
+/* === Page layout === */
 .search-results-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #fff, #fff8e1);
+  background: linear-gradient(to bottom, #ffffff, #fff8e1);
   padding: 40px;
   font-family: "Arial", sans-serif;
 }
 
+/* === Header === */
 .results-header {
   display: flex;
   align-items: center;
@@ -18,15 +20,40 @@
   text-align: right;
 }
 
+/* === Filter bar === */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 12px;
+}
+
+.filter-bar .MuiTextField-root {
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+/* === Loading spinner === */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+  gap: 10px;
+}
+
+/* === Grid results === */
 .results-grid {
   margin-top: 20px;
 }
 
+/* === Card styling === */
 .result-card {
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 
 .result-card:hover {
@@ -48,6 +75,7 @@
   font-style: italic;
 }
 
+/* === Text inside cards === */
 .result-title {
   font-weight: 600;
   margin-bottom: 6px;
@@ -62,13 +90,16 @@
 .result-description {
   color: #555;
   margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .result-price {
   color: #1a8917;
   font-weight: bold;
+  margin-top: 5px;
 }
 
+/* === No results message === */
 .no-results-text {
   text-align: center;
   margin-top: 80px;
@@ -76,22 +107,52 @@
   font-size: 1.2rem;
 }
 
-.loading-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 100px;
-  gap: 10px;
-}
-
+/* === Back button === */
 .back-btn {
   border-radius: 8px;
   font-weight: 500;
   text-transform: none;
+  color: #333;
 }
 
-.filter-bar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 25px;
+/* === Transaction type label === */
+.transaction-label {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+/* Blue = For Sale */
+.transaction-sell {
+  background-color: #007bff;
+}
+
+/* Purple = Trade/Exchange */
+.transaction-trade {
+  background-color: #a020f0;
+}
+
+/* Green = Donation */
+.transaction-donation {
+  background-color: #28a745;
+}
+
+/* === Smooth dropdown hover === */
+.MuiMenuItem-root:hover {
+  background-color: #fff4d3 !important;
+}
+
+/* === Small polish for the dropdowns === */
+.MuiOutlinedInput-root {
+  font-size: 0.9rem;
+}
+
+.MuiSelect-select {
+  padding: 8px 12px !important;
 }
