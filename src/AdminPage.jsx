@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function AdminPage() {
     const [activeTab, setActiveTab] = useState("items");
@@ -57,53 +57,19 @@ export default function AdminPage() {
         }
     ];
 
-    const users = [
-        {
-            id: 1,
-            name: "Sarah Johnson",
-            email: "sarah.johnson@community.local",
-            studentId: "CU001",
-            itemsPosted: 5,
-            trustScore: 95,
-            status: "active"
-        },
-        {
-            id: 2,
-            name: "Mike Chen",
-            email: "mike.chen@community.local",
-            studentId: "CU002",
-            itemsPosted: 3,
-            trustScore: 87,
-            status: "active"
-        },
-        {
-            id: 3,
-            name: "Lisa Rodriguez",
-            email: "lisa.rodriguez@community.local",
-            studentId: "CU003",
-            itemsPosted: 8,
-            trustScore: 92,
-            status: "active"
-        },
-        {
-            id: 4,
-            name: "David Park",
-            email: "david.park@community.local",
-            studentId: "CU004",
-            itemsPosted: 2,
-            trustScore: 88,
-            status: "active"
-        },
-        {
-            id: 5,
-            name: "Jessica Lee",
-            email: "jessica.lee@community.local",
-            studentId: "CU005",
-            itemsPosted: 4,
-            trustScore: 91,
-            status: "active"
-        }
-    ];
+    const [users, setUsers] = useState([]);
+    useEffect(() => {
+  if (activeTab === "users") {
+    fetch("http://localhost:5000/api/users") // backend port = 5000
+      .then(res => res.json())
+      .then(data => {
+        setUsers(data);
+      })
+      .catch(err => console.error("Error fetching users:", err));
+  }
+}, [activeTab]);
+
+
 
     const reports = [
         {
@@ -344,7 +310,7 @@ export default function AdminPage() {
                     <div className="bg-white rounded-lg shadow-sm p-6">
                         <h2 className="text-xl font-bold text-gray-900 mb-6">User Management</h2>
                         
-                        {/* Users Table */}
+                        {/* Users Table */} 
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
@@ -361,46 +327,50 @@ export default function AdminPage() {
                                 <tbody>
                                     {users.map((user) => (
                                         <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="py-4 px-4 font-medium text-gray-900">{user.name}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.email}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.studentId}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.itemsPosted}</td>
-                                            <td className="py-4 px-4">
-                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
-                                                    {user.trustScore}%
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
-                                                    {user.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex gap-2 items-center">
-                                                    <button
-                                                        onClick={() => handleEditUser(user.id)}
-                                                        className="text-gray-600 hover:text-gray-900 p-1"
-                                                        title="Edit User"
-                                                    >
-                                                        🔗
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleSuspendUser(user.id)}
-                                                        className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
-                                                    >
-                                                        Suspend
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleBanUser(user.id)}
-                                                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
-                                                    >
-                                                        Ban
-                                                    </button>
-                                                </div>
-                                            </td>
+                                        <td className="py-4 px-4 font-medium text-gray-900">{user.username}</td>
+                                        <td className="py-4 px-4 text-gray-700">{user.email}</td>
+                                        <td className="py-4 px-4 text-gray-700">{user.id}</td>
+                                        {/* Change to actual items posted */}
+                                        <td className="py-4 px-4 text-gray-700">0</td>
+                                        <td className="py-4 px-4">
+                                            {/* Change to actual trust score */}
+                                            <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                            0%
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            {/* Change to actual user status */}
+                                            <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                            Active
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            {/* Action Buttons */}
+                                            <div className="flex gap-2 items-center">
+                                            <button
+                                                onClick={() => handleEditUser(user.id)}
+                                                className="text-gray-600 hover:text-gray-900 p-1"
+                                                title="Edit User"
+                                            >
+                                                🔗
+                                            </button>
+                                            <button
+                                                onClick={() => handleSuspendUser(user.id)}
+                                                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                            >
+                                                Suspend
+                                            </button>
+                                            <button
+                                                onClick={() => handleBanUser(user.id)}
+                                                className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
+                                            >
+                                                Ban
+                                            </button>
+                                            </div>
+                                        </td>
                                         </tr>
                                     ))}
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                     </div>

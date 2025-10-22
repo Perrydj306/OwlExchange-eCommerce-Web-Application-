@@ -106,6 +106,10 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// USER ROUTES
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
 // ITEM ROUTES
 app.use("/api/items", require("./routes/itemRoutes"));
 
