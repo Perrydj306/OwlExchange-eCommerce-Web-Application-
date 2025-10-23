@@ -107,9 +107,27 @@ export default function AdminPage() {
         item.seller.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleSuspendUser = (userId) => {
-        console.log("Suspend user:", userId);
+    const handleSuspendUser = async (userId) => {
+    try {
+        const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) throw new Error("Failed to update user status");
+        const data = await response.json();
+
+        // Update the UI without refetching
+        setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+            user.id === userId ? { ...user, status: data.newStatus } : user
+        )
+        );
+    } catch (error) {
+        console.error("Error toggling user status:", error);
+    }
     };
+
 
     const handleBanUser = (userId) => {
         console.log("Ban user:", userId);
@@ -400,12 +418,7 @@ export default function AdminPage() {
                                             0%
                                             </span>
                                         </td>
-                                        <td className="py-4 px-4">
-                                            {/* Change to actual user status */}
-                                            <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
-                                            Active
-                                            </span>
-                                        </td>
+                                        <td className="py-4 px-4 text-gray-700">{user.status}</td>
                                         <td className="py-4 px-4">
                                             {/* Action Buttons */}
                                             <div className="flex gap-2 items-center">
@@ -417,10 +430,14 @@ export default function AdminPage() {
                                                 🔗
                                             </button>
                                             <button
-                                                onClick={() => handleSuspendUser(user.id)}
-                                                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                            onClick={() => handleSuspendUser(user.id)}
+                                            className={`px-4 py-2 text-sm font-medium rounded-lg ${
+                                                user.status === 'Active'
+                                                ? 'bg-white border border-gray-300 text-gray-900 hover:bg-gray-50'
+                                                : 'bg-green-500 text-white hover:bg-green-600'
+                                            }`}
                                             >
-                                                Suspend
+                                            {user.status === 'Active' ? 'Deactivate' : 'Activate'}
                                             </button>
                                             <button
                                                 onClick={() => handleBanUser(user.id)}
