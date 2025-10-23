@@ -12,6 +12,7 @@ console.log("Starting backend...");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 // Connect to MSSQL
 connectDB();
@@ -104,6 +105,10 @@ app.post("/api/login", async (req, res) => {
     res.status(500).send("Server error during login");
   }
 });
+
+// USER ROUTES
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
 
 // ITEM ROUTES
 app.use("/api/items", require("./routes/itemRoutes"));

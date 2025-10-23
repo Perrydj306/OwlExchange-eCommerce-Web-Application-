@@ -47,7 +47,8 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(data.user));
         setLoginError("");
 
-        if (data.user.email === "admin@owlexchange.com") {
+        const emailDomain = data.user.email.split("@")[1];
+        if (emailDomain === "owladmin.com") {
           navigate("/admin");
         } else {
           navigate("/dashboard");
