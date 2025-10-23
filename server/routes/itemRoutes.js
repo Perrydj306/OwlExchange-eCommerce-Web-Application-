@@ -18,7 +18,6 @@ router.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-
   const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
   res.json({ imageUrl });
 });
@@ -67,9 +66,8 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const result = await sql.query(`
-      SELECT 
-        id, title, description, category, condition, price, tags, contactMethod,
-        transactionType, imageUrl, createdAt
+      SELECT id, title, description, category, condition, price, tags, contactMethod,
+             transactionType, imageUrl, createdAt
       FROM Items
       ORDER BY createdAt DESC
     `);
@@ -80,31 +78,21 @@ router.get("/", async (req, res) => {
   }
 });
 
-
-// ===== Search Items (keyword, category, transaction type) =====
+// ===== Search Items =====
 router.get("/search", async (req, res) => {
   const { keyword = "", category = "", transactionType = "" } = req.query;
 
   try {
     let query = `
-      SELECT 
-        id, title, description, category, condition, price, tags, contactMethod,
-        transactionType, imageUrl, createdAt
+      SELECT id, title, description, category, condition, price, tags, contactMethod,
+             transactionType, imageUrl, createdAt
       FROM Items
       WHERE 1=1
     `;
 
-    if (keyword) {
-      query += ` AND (title LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`;
-    }
-
-    if (category && category.toLowerCase() !== "all") {
-      query += ` AND LOWER(category) = '${category.toLowerCase()}'`;
-    }
-
-    if (transactionType && transactionType !== "All" && transactionType !== "all") {
-      query += ` AND transactionType = ${transactionType}`;
-    }
+    if (keyword) query += ` AND (title LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`;
+    if (category && category.toLowerCase() !== "all") query += ` AND LOWER(category) = '${category.toLowerCase()}'`;
+    if (transactionType && transactionType !== "All" && transactionType !== "all") query += ` AND transactionType = ${transactionType}`;
 
     query += " ORDER BY createdAt DESC";
 
@@ -114,8 +102,9 @@ router.get("/search", async (req, res) => {
     console.error("Error fetching search results:", err);
     res.status(500).json({ error: "Failed to fetch search results" });
   }
+});
 
-  // ===== Get Single Item by ID =====
+// ===== Get Single Item by ID =====
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -127,7 +116,6 @@ router.get("/:id", async (req, res) => {
     console.error("Error fetching item:", err);
     res.status(500).json({ error: "Failed to fetch item" });
   }
-});
 });
 
 module.exports = router;
