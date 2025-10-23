@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./AdminPage.css";
 
 export default function AdminPage() {
     const [activeTab, setActiveTab] = useState("items");
@@ -97,7 +98,7 @@ export default function AdminPage() {
         {
             id: 5,
             name: "Jessica Lee",
-            email: "jessica.lee@community.local",
+            email: "email@community.local",
             studentId: "CU005",
             itemsPosted: 4,
             trustScore: 91,
@@ -165,33 +166,31 @@ export default function AdminPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="admin-dashboard">
             {/* Header */}
-            <header className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
-                            <span className="text-white text-xl font-bold">📦</span>
+            <header>
+                <div className="top-bar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+                        <div className="top-pill">
+                            <div className="pill-icon">🦉</div>
+                            <div>Admin Dashboard</div>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <button className="text-gray-600 hover:text-gray-900 font-medium">
+
+                    <div className="top-right-controls">
+                        <button className="back-btn">
                             Back to Marketplace
                         </button>
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                                <span className="text-white text-sm font-bold">AU</span>
+                        <div className="flex items-center gap-2 user-area">
+                            <div className="user-badge">
+                                <span>AU</span>
                             </div>
-                            <div>
-                                <div className="text-sm font-semibold text-gray-900">Admin User</div>
-                                <div className="text-xs text-gray-500">Admin</div>
+                            <div className="user-details">
+                                <div className="user-name">Admin User</div>
+                                <div className="user-role">Admin</div>
                             </div>
                         </div>
-                        <button 
-                            onClick={handleLogout}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium"
-                        >
+                        <button onClick={handleLogout} className="sign-out-btn">
                             <span>🚪</span> Sign Out
                         </button>
                     </div>
@@ -199,60 +198,127 @@ export default function AdminPage() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-6 py-8">
+            <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
+                {/* Dashboard Overview */}
+                <div className="dashboard-overview">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <div className="overview-icon">
+                            <span>🦉</span>
+                        </div>
+                        <div style={{ textAlign: 'left' }}>
+                            <h2 className="overview-title">OwlExchange Admin</h2>
+                            <p className="overview-subtitle">Manage community donations, trades, and sales</p>
+                        </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <div className="stat-header">
+                                <div className="stat-icon gray"></div>
+                                <span className="stat-emoji">📦</span>
+                            </div>
+                            <div className="stat-title">Total Items</div>
+                            <div className="stat-value">5</div>
+                            <div className="stat-subtitle">0 pending review</div>
+                        </div>
+
+                        <div className="stat-card">
+                            <div className="stat-header">
+                                <div className="stat-icon gray"></div>
+                                <span className="stat-emoji">👥</span>
+                            </div>
+                            <div className="stat-title">Active Users</div>
+                            <div className="stat-value">3</div>
+                            <div className="stat-subtitle">0 flagged users</div>
+                        </div>
+
+                        <div className="stat-card">
+                            <div className="stat-header">
+                                <div className="stat-icon red"></div>
+                                <span className="stat-emoji">🚩</span>
+                            </div>
+                            <div className="stat-title">Flagged Items</div>
+                            <div className="stat-value red">0</div>
+                            <div className="stat-subtitle">Require attention</div>
+                        </div>
+
+                        <div className="stat-card">
+                            <div className="stat-header">
+                                <div className="stat-icon orange"></div>
+                                <span className="stat-emoji">⚠️</span>
+                            </div>
+                            <div className="stat-title">Reports</div>
+                            <div className="stat-value orange">3</div>
+                            <div className="stat-subtitle">Pending review</div>
+                        </div>
+                    </div>
+
+                    {/* Transaction Types */}
+                    <div className="transaction-grid">
+                        <div className="transaction-card">
+                            <div className="transaction-header">
+                                <div className="transaction-title">Donations</div>
+                                <div className="stat-icon green"></div>
+                            </div>
+                            <div className="transaction-value">3</div>
+                            <div className="transaction-subtitle">Free community items</div>
+                            <span className="dot green"></span>
+                        </div>
+
+                        <div className="transaction-card">
+                            <div className="transaction-header">
+                                <div className="transaction-title">Trades</div>
+                                <div className="stat-icon blue"></div>
+                            </div>
+                            <div className="transaction-value">1</div>
+                            <div className="transaction-subtitle">Exchange-based items</div>
+                            <span className="dot blue"></span>
+                        </div>
+
+                        <div className="transaction-card">
+                            <div className="transaction-header">
+                                <div className="transaction-title">Sales</div>
+                                <div className="stat-icon purple"></div>
+                            </div>
+                            <div className="transaction-value">2</div>
+                            <div className="transaction-subtitle">Paid transactions</div>
+                            <span className="dot purple"></span>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Tabs */}
-                <div className="bg-white rounded-lg shadow-sm mb-6">
-                    <div className="flex border-b border-gray-200">
+                <div className="table-container" style={{ marginBottom: '0' }}>
+                    <div className="nav-tabs">
                         <button
                             onClick={() => setActiveTab("items")}
-                            className={`px-6 py-4 font-medium ${
-                                activeTab === "items"
-                                    ? "text-gray-900 border-b-2 border-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
+                            className={`nav-tab ${activeTab === "items" ? "active" : ""}`}
                         >
                             Items Management
                         </button>
                         <button
                             onClick={() => setActiveTab("users")}
-                            className={`px-6 py-4 font-medium ${
-                                activeTab === "users"
-                                    ? "text-gray-900 border-b-2 border-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
+                            className={`nav-tab ${activeTab === "users" ? "active" : ""}`}
                         >
                             User Management
                         </button>
                         <button
                             onClick={() => setActiveTab("reports")}
-                            className={`px-6 py-4 font-medium ${
-                                activeTab === "reports"
-                                    ? "text-gray-900 border-b-2 border-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
+                            className={`nav-tab ${activeTab === "reports" ? "active" : ""}`}
                         >
                             Reports
                         </button>
                         <button
                             onClick={() => setActiveTab("complaints")}
-                            className={`px-6 py-4 font-medium relative ${
-                                activeTab === "complaints"
-                                    ? "text-gray-900 border-b-2 border-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
+                            className={`nav-tab ${activeTab === "complaints" ? "active" : ""}`}
                         >
                             Complaints
-                            <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                                1
-                            </span>
+                            <span className="badge">1</span>
                         </button>
                         <button
                             onClick={() => setActiveTab("activity")}
-                            className={`px-6 py-4 font-medium ${
-                                activeTab === "activity"
-                                    ? "text-gray-900 border-b-2 border-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
+                            className={`nav-tab ${activeTab === "activity" ? "active" : ""}`}
                         >
                             Activity Log
                         </button>
@@ -261,13 +327,13 @@ export default function AdminPage() {
 
                 {/* Item Management Content */}
                 {activeTab === "items" && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6">Item Management</h2>
+                    <div className="content-container">
+                        <h2>Item Management</h2>
                         
                         {/* Search and Filter */}
-                        <div className="flex gap-4 mb-6">
-                            <div className="flex-1 relative">
-                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <div className="search-filter-bar">
+                            <div style={{ flex: 1, position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#999' }}>
                                     🔍
                                 </span>
                                 <input
@@ -275,14 +341,10 @@ export default function AdminPage() {
                                     placeholder="Search items..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    style={{ paddingLeft: '40px' }}
                                 />
                             </div>
-                            <select
-                                value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            >
+                            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
                                 <option>All Items</option>
                                 <option>Active</option>
                                 <option>Inactive</option>
@@ -291,43 +353,43 @@ export default function AdminPage() {
                         </div>
 
                         {/* Items Table */}
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
+                        <div style={{ overflowX: 'auto' }}>
+                            <table>
                                 <thead>
-                                    <tr className="border-b border-gray-200">
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Title</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Seller</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Category</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Price</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Flags</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Seller</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Flags</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredItems.map((item) => (
-                                        <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="py-4 px-4 font-medium text-gray-900">{item.title}</td>
-                                            <td className="py-4 px-4 text-gray-700">{item.seller}</td>
-                                            <td className="py-4 px-4 text-gray-700">{item.category}</td>
-                                            <td className="py-4 px-4">
-                                                <span className={item.price === "FREE" ? "text-green-600 font-medium" : "text-gray-900"}>
+                                        <tr key={item.id}>
+                                            <td style={{ fontWeight: 600 }}>{item.title}</td>
+                                            <td>{item.seller}</td>
+                                            <td>{item.category}</td>
+                                            <td>
+                                                <span style={{ color: item.price === "FREE" ? "#4caf50" : "#1a1a1a", fontWeight: item.price === "FREE" ? 600 : 400 }}>
                                                     {item.price === "FREE" ? "FREE" : `$${item.price}`}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4">
-                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full">
+                                            <td>
+                                                <span className="status-badge status-active">
                                                     {item.status}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4 text-gray-700">{item.flags}</td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex gap-2">
-                                                    <button className="p-2 hover:bg-gray-100 rounded-lg" title="View">
-                                                        <span className="text-gray-600">👁️</span>
+                                            <td>{item.flags}</td>
+                                            <td>
+                                                <div className="action-buttons">
+                                                    <button className="btn-view" title="View">
+                                                        <span>👁️</span>
                                                     </button>
-                                                    <button className="p-2 hover:bg-red-50 rounded-lg" title="Delete">
-                                                        <span className="text-red-600">🗑️</span>
+                                                    <button className="btn-delete" title="Delete">
+                                                        <span>🗑️</span>
                                                     </button>
                                                 </div>
                                             </td>
@@ -341,58 +403,58 @@ export default function AdminPage() {
 
                 {/* User Management Content */}
                 {activeTab === "users" && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6">User Management</h2>
+                    <div className="content-container">
+                        <h2>User Management</h2>
                         
                         {/* Users Table */}
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
+                        <div style={{ overflowX: 'auto' }}>
+                            <table>
                                 <thead>
-                                    <tr className="border-b border-gray-200">
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Name</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Email</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Student ID</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Items Posted</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Trust Score</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Status</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">Actions</th>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Student ID</th>
+                                        <th>Items Posted</th>
+                                        <th>Trust Score</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {users.map((user) => (
-                                        <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="py-4 px-4 font-medium text-gray-900">{user.name}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.email}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.studentId}</td>
-                                            <td className="py-4 px-4 text-gray-700">{user.itemsPosted}</td>
-                                            <td className="py-4 px-4">
-                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                        <tr key={user.id}>
+                                            <td style={{ fontWeight: 600 }}>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.studentId}</td>
+                                            <td>{user.itemsPosted}</td>
+                                            <td>
+                                                <span className="trust-score">
                                                     {user.trustScore}%
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4">
-                                                <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
+                                            <td>
+                                                <span className="status-badge status-active">
                                                     {user.status}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex gap-2 items-center">
+                                            <td>
+                                                <div className="action-buttons">
                                                     <button
                                                         onClick={() => handleEditUser(user.id)}
-                                                        className="text-gray-600 hover:text-gray-900 p-1"
+                                                        className="btn-edit"
                                                         title="Edit User"
                                                     >
                                                         🔗
                                                     </button>
                                                     <button
                                                         onClick={() => handleSuspendUser(user.id)}
-                                                        className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                                        className="btn-suspend"
                                                     >
                                                         Suspend
                                                     </button>
                                                     <button
                                                         onClick={() => handleBanUser(user.id)}
-                                                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
+                                                        className="btn-ban"
                                                     >
                                                         Ban
                                                     </button>
@@ -408,45 +470,45 @@ export default function AdminPage() {
 
                 {/* Reports Content */}
                 {activeTab === "reports" && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6">Reports & Flags</h2>
+                    <div className="content-container">
+                        <h2>Reports & Flags</h2>
                         
                         {/* Reports List */}
                         <div className="space-y-4">
                             {reports.map((report) => (
-                                <div key={report.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                <div key={report.id} className="report-card">
+                                    <div className="report-header">
+                                        <div style={{ flex: 1 }}>
+                                            <h3 className="report-title">
                                                 {report.itemTitle || report.userReported}
                                             </h3>
-                                            <p className="text-sm text-gray-600">
+                                            <p className="report-meta">
                                                 Reported by {report.reportedBy} • {report.date}
                                             </p>
                                         </div>
-                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                        <span className="badge-warning">
                                             {report.reason}
                                         </span>
                                     </div>
                                     
-                                    <p className="text-gray-700 mb-4">{report.description}</p>
+                                    <p className="report-description">{report.description}</p>
                                     
-                                    <div className="flex gap-3">
+                                    <div className="report-actions">
                                         <button
                                             onClick={() => handleReviewReport(report.id)}
-                                            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800"
+                                            className="btn-primary"
                                         >
                                             Review
                                         </button>
                                         <button
                                             onClick={() => handleDismissReport(report.id)}
-                                            className="px-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50"
+                                            className="btn-secondary"
                                         >
                                             Dismiss
                                         </button>
                                         <button
                                             onClick={() => handleTakeAction(report.id)}
-                                            className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600"
+                                            className="btn-danger"
                                         >
                                             Take Action
                                         </button>
@@ -459,11 +521,11 @@ export default function AdminPage() {
 
                 {/* Other Tabs Placeholder */}
                 {activeTab !== "items" && activeTab !== "users" && activeTab !== "reports" && (
-                    <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    <div className="content-container text-center" style={{ padding: '48px 24px' }}>
+                        <h2 style={{ marginBottom: '16px' }}>
                             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management
                         </h2>
-                        <p className="text-gray-600">This section is under development.</p>
+                        <p className="text-secondary">This section is under development.</p>
                     </div>
                 )}
             </main>
