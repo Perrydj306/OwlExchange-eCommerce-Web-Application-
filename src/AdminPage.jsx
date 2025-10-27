@@ -66,8 +66,7 @@ export default function AdminPage() {
     ];
 
     const filteredItems = items.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.seller.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) 
     );
 
     const handleSuspendUser = async (userId) => {
