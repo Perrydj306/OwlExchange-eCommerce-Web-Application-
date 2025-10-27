@@ -113,50 +113,6 @@ app.use('/api/users', userRoutes);
 // ITEM ROUTES
 app.use("/api/items", require("./routes/itemRoutes"));
 
-// ITEM SEARCH 
-app.get("/api/items/search", async (req, res) => {
-  const { keyword, category } = req.query;
-
-  try {
-    const request = new sql.Request();
-
-    // Add parameters only if provided
-    if (keyword) request.input("keyword", sql.VarChar(255), keyword);
-    if (category) request.input("category", sql.VarChar(100), category);
-
-    // Base query
-    let query = `
-      SELECT * FROM Items
-      WHERE 1=1
-    `;
-
-    // Filter by keyword if provided
-    if (keyword && keyword.trim() !== "") {
-      query += `
-        AND (
-          title LIKE CONCAT('%', @keyword, '%')
-          OR description LIKE CONCAT('%', @keyword, '%')
-          OR category LIKE CONCAT('%', @keyword, '%')
-          OR tags LIKE CONCAT('%', @keyword, '%')
-        )
-      `;
-    }
-
-    // Filter by category if provided
-    if (category && category.trim() !== "") {
-      query += ` AND category = @category `;
-    }
-
-    query += ` ORDER BY createdAt DESC`;
-
-    const result = await request.query(query);
-    res.json(result.recordset);
-  } catch (err) {
-    console.error("Error searching items:", err);
-    res.status(500).json({ error: "Failed to search items" });
-  }
-});
-
 // START SERVER 
 const PORT = 5000;
 app.listen(PORT, () => {

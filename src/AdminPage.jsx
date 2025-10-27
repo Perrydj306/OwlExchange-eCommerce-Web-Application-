@@ -10,53 +10,16 @@ export default function AdminPage() {
         window.location.href = "/";
     };
 
-    const items = [
-        {
-            id: 1,
-            title: "Vintage Wooden Coffee Table",
-            seller: "Sarah Johnson",
-            category: "Furniture",
-            price: "75",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 2,
-            title: "Free: Kids' Clothes & Toys Bundle",
-            seller: "Mike Chen",
-            category: "Kids & Baby",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 3,
-            title: "Kitchen Appliances - Looking to Trade",
-            seller: "Lisa Rodriguez",
-            category: "Kitchen & Dining",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 4,
-            title: "Garden Tools & Supplies",
-            seller: "David Park",
-            category: "Garden & Outdoor",
-            price: "40",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 5,
-            title: "Free: Moving Boxes & Packing Supplies",
-            seller: "Jessica Lee",
-            category: "Home & Storage",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        }
-    ];
+    const [items, setItems] = useState([]);
+    useEffect(() => {
+  if (activeTab === "items") {
+    fetch("http://localhost:5000/api/items")
+      .then(res => res.json())
+      .then(data => setItems(data))
+      .catch(err => console.error("Error fetching items:", err));
+  }
+}, [activeTab]);
+
 
     const [users, setUsers] = useState([]);
     useEffect(() => {
@@ -346,7 +309,7 @@ export default function AdminPage() {
                                         <th>Category</th>
                                         <th>Price</th>
                                         <th>Status</th>
-                                        <th>Flags</th>
+                                        <th>Tags</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -354,7 +317,7 @@ export default function AdminPage() {
                                     {filteredItems.map((item) => (
                                         <tr key={item.id}>
                                             <td style={{ fontWeight: 600 }}>{item.title}</td>
-                                            <td>{item.seller}</td>
+                                            <td>{item.seller}</td> {/* Not yet defined in db */}
                                             <td>{item.category}</td>
                                             <td>
                                                 <span style={{ color: item.price === "FREE" ? "#4caf50" : "#1a1a1a", fontWeight: item.price === "FREE" ? 600 : 400 }}>
@@ -363,10 +326,10 @@ export default function AdminPage() {
                                             </td>
                                             <td>
                                                 <span className="status-badge status-active">
-                                                    {item.status}
+                                                    {item.status} {/* Not yet defined in db */} 
                                                 </span>
                                             </td>
-                                            <td>{item.flags}</td>
+                                            <td>{item.tags}</td>
                                             <td>
                                                 <div className="action-buttons">
                                                     <button className="btn-view" title="View">
