@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
   try {
     const result = await sql.query(`
       SELECT id, title, description, category, condition, price, tags, contactMethod,
-             transactionType, imageUrl, createdAt
+             transactionType, imageUrl, status, createdAt
       FROM Items
       ORDER BY createdAt DESC
     `);
@@ -85,7 +85,7 @@ router.get("/search", async (req, res) => {
   try {
     let query = `
       SELECT id, title, description, category, condition, price, tags, contactMethod,
-             transactionType, imageUrl, createdAt
+             transactionType, imageUrl, status, createdAt
       FROM Items
       WHERE 1=1
     `;
