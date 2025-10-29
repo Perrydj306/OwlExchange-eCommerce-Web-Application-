@@ -5,6 +5,8 @@ export default function AdminPage() {
     const [activeTab, setActiveTab] = useState("items");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("All Items");
+    const [activeUsers, setActiveUsers] = useState(0);
+
 
     const handleLogout = () => {
         window.location.href = "/";
@@ -33,6 +35,12 @@ export default function AdminPage() {
   }
 }, [activeTab]);
 
+    useEffect(() => {
+    fetch("http://localhost:5000/api/users/count/active")
+        .then((res) => res.json())
+        .then((data) => setActiveUsers(data.activeUsers))
+        .catch((err) => console.error("Error fetching active user count:", err));
+    }, []);
 
 
     const reports = [
@@ -70,25 +78,33 @@ export default function AdminPage() {
     );
 
     const handleSuspendUser = async (userId) => {
-    try {
-        const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        });
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    });
 
-        if (!response.ok) throw new Error("Failed to update user status");
-        const data = await response.json();
+    if (!response.ok) throw new Error("Failed to update user status");
+    const data = await response.json();
 
-        // Update the UI without refetching
-        setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-            user.id === userId ? { ...user, status: data.newStatus } : user
-        )
-        );
-    } catch (error) {
-        console.error("Error toggling user status:", error);
-    }
-    };
+    // Update the UI without refetching all users
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === userId ? { ...user, status: data.newStatus } : user
+      )
+    );
+
+    // Refresh the Active Users count in real time
+    fetch("http://localhost:5000/api/users/count/active")
+      .then((res) => res.json())
+      .then((data) => setActiveUsers(data.activeUsers))
+      .catch((err) => console.error("Error refreshing active user count:", err));
+
+  } catch (error) {
+    console.error("Error toggling user status:", error);
+  }
+};
+
 
 
     const handleBanUser = async (userId) => {
@@ -197,7 +213,7 @@ export default function AdminPage() {
                                 <span className="stat-emoji">👥</span>
                             </div>
                             <div className="stat-title">Active Users</div>
-                            <div className="stat-value">3</div>
+                            <div className="stat-value">{activeUsers}</div>
                             <div className="stat-subtitle">0 flagged users</div>
                         </div>
 

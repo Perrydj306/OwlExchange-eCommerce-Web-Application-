@@ -78,5 +78,21 @@ router.post("/:id/restore", async (req, res) => {
   }
 });
 
+// GET total number of active users
+router.get("/count/active", async (req, res) => {
+  try {
+    const result = await sql.query`
+      SELECT COUNT(*) AS activeCount
+      FROM Users
+      WHERE status = 'Active' AND role = 'User'
+    `;
+    res.json({ activeUsers: result.recordset[0].activeCount });
+  } catch (err) {
+    console.error("Error counting active users:", err);
+    res.status(500).json({ error: "Failed to get active user count" });
+  }
+});
+
+
 module.exports = router;
 
