@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const sql = require("mssql");
+const bcrypt = require("bcryptjs");
+
 
 // GET all active users (not admins)
 router.get("/", async (req, res) => {
@@ -93,6 +95,67 @@ router.get("/count/active", async (req, res) => {
   }
 });
 
+// RESET a user's password (for recovery)
+router.put("/:id/reset-password", async (req, res) => {
+  const { id } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    if (!newPassword) {
+      return res.status(400).json({ error: "New password required" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const request = new sql.Request();
+    request.input("hashedPassword", sql.VarChar(sql.MAX), hashedPassword);
+    request.input("userId", sql.Int, id);
+
+await request.query(`
+  UPDATE Users 
+  SET password = @hashedPassword, requirePasswordChange = 1
+  WHERE id = @userId
+`);
+
+
+    res.json({
+      message: "Password reset successfully. User must change it on next login.",
+    });
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    res.status(500).json({ error: "Failed to reset password" });
+  }
+});
+
+// CHANGE PASSWORD ROUTE
+router.post("/change-password", async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  console.log("Received password change request for user:", userId);
+
+  try {
+    if (!userId || !newPassword) {
+      return res.status(400).json({ error: "User ID and new password required." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const request = new sql.Request();
+      request.input("hashedPassword", sql.VarChar(sql.MAX), hashedPassword);
+      request.input("userId", sql.Int, userId);
+
+    await request.query(`
+      UPDATE Users 
+      SET password = @hashedPassword, requirePasswordChange = 0
+      WHERE id = @userId
+    `);
+
+    res.json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).json({ error: "Failed to update password." });
+  }
+});
 
 module.exports = router;
 

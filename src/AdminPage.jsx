@@ -132,9 +132,30 @@ export default function AdminPage() {
 };
 
 
-    const handleEditUser = (userId) => {
-        console.log("Edit user:", userId);
-    };
+    const handleEditUser = async (userId) => {
+  const newPassword = prompt("Enter a new password for this user:");
+  if (!newPassword) return alert("Password reset cancelled.");
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/users/${userId}/reset-password`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to reset password");
+    const data = await response.json();
+
+    alert("✅ " + data.message);
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    alert("❌ Failed to reset password");
+  }
+};
+
 
     const handleReviewReport = (reportId) => {
         console.log("Review report:", reportId);
