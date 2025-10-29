@@ -5,58 +5,23 @@ export default function AdminPage() {
     const [activeTab, setActiveTab] = useState("items");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("All Items");
+    const [activeUsers, setActiveUsers] = useState(0);
+
 
     const handleLogout = () => {
         window.location.href = "/";
     };
 
-    const items = [
-        {
-            id: 1,
-            title: "Vintage Wooden Coffee Table",
-            seller: "Sarah Johnson",
-            category: "Furniture",
-            price: "75",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 2,
-            title: "Free: Kids' Clothes & Toys Bundle",
-            seller: "Mike Chen",
-            category: "Kids & Baby",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 3,
-            title: "Kitchen Appliances - Looking to Trade",
-            seller: "Lisa Rodriguez",
-            category: "Kitchen & Dining",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 4,
-            title: "Garden Tools & Supplies",
-            seller: "David Park",
-            category: "Garden & Outdoor",
-            price: "40",
-            status: "active",
-            flags: 0
-        },
-        {
-            id: 5,
-            title: "Free: Moving Boxes & Packing Supplies",
-            seller: "Jessica Lee",
-            category: "Home & Storage",
-            price: "FREE",
-            status: "active",
-            flags: 0
-        }
-    ];
+    const [items, setItems] = useState([]);
+    useEffect(() => {
+  if (activeTab === "items") {
+    fetch("http://localhost:5000/api/items")
+      .then(res => res.json())
+      .then(data => setItems(data))
+      .catch(err => console.error("Error fetching items:", err));
+  }
+}, [activeTab]);
+
 
     const [users, setUsers] = useState([]);
     useEffect(() => {
@@ -70,6 +35,12 @@ export default function AdminPage() {
   }
 }, [activeTab]);
 
+    useEffect(() => {
+    fetch("http://localhost:5000/api/users/count/active")
+        .then((res) => res.json())
+        .then((data) => setActiveUsers(data.activeUsers))
+        .catch((err) => console.error("Error fetching active user count:", err));
+    }, []);
 
 
     const reports = [
@@ -103,35 +74,63 @@ export default function AdminPage() {
     ];
 
     const filteredItems = items.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.seller.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) 
     );
 
     const handleSuspendUser = async (userId) => {
-    try {
-        const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        });
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    });
 
-        if (!response.ok) throw new Error("Failed to update user status");
-        const data = await response.json();
+    if (!response.ok) throw new Error("Failed to update user status");
+    const data = await response.json();
 
-        // Update the UI without refetching
-        setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-            user.id === userId ? { ...user, status: data.newStatus } : user
-        )
-        );
-    } catch (error) {
-        console.error("Error toggling user status:", error);
-    }
-    };
+    // Update the UI without refetching all users
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === userId ? { ...user, status: data.newStatus } : user
+      )
+    );
+
+    // Refresh the Active Users count in real time
+    fetch("http://localhost:5000/api/users/count/active")
+      .then((res) => res.json())
+      .then((data) => setActiveUsers(data.activeUsers))
+      .catch((err) => console.error("Error refreshing active user count:", err));
+
+  } catch (error) {
+    console.error("Error toggling user status:", error);
+  }
+};
 
 
-    const handleBanUser = (userId) => {
-        console.log("Ban user:", userId);
-    };
+
+    const handleBanUser = async (userId) => {
+  const confirmBan = window.confirm(
+    "Are you sure you want to ban this user? Their profile will be removed."
+  );
+  if (!confirmBan) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/${userId}/ban`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) throw new Error("Failed to ban user");
+    await response.json();
+
+    // Instantly remove the banned user from the visible table
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+
+    alert("✅ User has been banned and removed from the list.");
+  } catch (error) {
+    console.error("Error banning user:", error);
+    alert("❌ Failed to ban user.");
+  }
+};
+
 
     const handleEditUser = (userId) => {
         console.log("Edit user:", userId);
@@ -149,6 +148,7 @@ export default function AdminPage() {
         console.log("Take action on report:", reportId);
     };
 
+    
     return (
         <div className="admin-dashboard">
             {/* Header */}
@@ -213,7 +213,7 @@ export default function AdminPage() {
                                 <span className="stat-emoji">👥</span>
                             </div>
                             <div className="stat-title">Active Users</div>
-                            <div className="stat-value">3</div>
+                            <div className="stat-value">{activeUsers}</div>
                             <div className="stat-subtitle">0 flagged users</div>
                         </div>
 
@@ -346,7 +346,7 @@ export default function AdminPage() {
                                         <th>Category</th>
                                         <th>Price</th>
                                         <th>Status</th>
-                                        <th>Flags</th>
+                                        <th>Tags</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -354,7 +354,7 @@ export default function AdminPage() {
                                     {filteredItems.map((item) => (
                                         <tr key={item.id}>
                                             <td style={{ fontWeight: 600 }}>{item.title}</td>
-                                            <td>{item.seller}</td>
+                                            <td>{item.seller}</td> {/* Not yet defined in db */}
                                             <td>{item.category}</td>
                                             <td>
                                                 <span style={{ color: item.price === "FREE" ? "#4caf50" : "#1a1a1a", fontWeight: item.price === "FREE" ? 600 : 400 }}>
@@ -363,10 +363,10 @@ export default function AdminPage() {
                                             </td>
                                             <td>
                                                 <span className="status-badge status-active">
-                                                    {item.status}
+                                                    {item.status} {/* Not yet defined in db */} 
                                                 </span>
                                             </td>
-                                            <td>{item.flags}</td>
+                                            <td>{item.tags}</td>
                                             <td>
                                                 <div className="action-buttons">
                                                     <button className="btn-view" title="View">

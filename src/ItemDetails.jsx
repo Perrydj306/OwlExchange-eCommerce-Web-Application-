@@ -66,15 +66,18 @@ const ItemDetails = () => {
         Back
       </Button>
 
-      <Box className="item-details-layout">
-        {/* Left: Image */}
-        <Card className="item-image-card" elevation={3}>
+              {/* Main Item Image */}
+        <Card className="item-image-card" elevation={2}>
           <img
             src={item.imageUrl || "/placeholder.png"}
             alt={item.title}
             className="item-image"
           />
         </Card>
+
+{/* Main Info Container */}
+<Box className="item-main-info">
+
 
         {/* Right: Item Info */}
         <Box className="item-info-column">
