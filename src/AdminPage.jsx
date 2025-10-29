@@ -129,9 +129,30 @@ export default function AdminPage() {
     };
 
 
-    const handleBanUser = (userId) => {
-        console.log("Ban user:", userId);
-    };
+    const handleBanUser = async (userId) => {
+  const confirmBan = window.confirm(
+    "Are you sure you want to ban this user? Their profile will be removed."
+  );
+  if (!confirmBan) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/${userId}/ban`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) throw new Error("Failed to ban user");
+    await response.json();
+
+    // Instantly remove the banned user from the visible table
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+
+    alert("✅ User has been banned and removed from the list.");
+  } catch (error) {
+    console.error("Error banning user:", error);
+    alert("❌ Failed to ban user.");
+  }
+};
+
 
     const handleEditUser = (userId) => {
         console.log("Edit user:", userId);
@@ -149,6 +170,7 @@ export default function AdminPage() {
         console.log("Take action on report:", reportId);
     };
 
+    
     return (
         <div className="admin-dashboard">
             {/* Header */}
