@@ -384,7 +384,7 @@ export default function AdminPage() {
                                             </td>
                                             <td>
                                                 <span className="status-badge status-active">
-                                                    {item.status} {/* Not yet defined in db */} 
+                                                    {item.status}
                                                 </span>
                                             </td>
                                             <td>{item.tags}</td>

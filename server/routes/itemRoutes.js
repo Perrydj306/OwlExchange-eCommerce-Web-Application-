@@ -87,7 +87,7 @@ router.get("/search", async (req, res) => {
       SELECT id, title, description, category, condition, price, tags, contactMethod,
              transactionType, imageUrl, status, createdAt
       FROM Items
-      WHERE 1=1
+      WHERE status = 'active'
     `;
 
     if (keyword) query += ` AND (title LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`;
