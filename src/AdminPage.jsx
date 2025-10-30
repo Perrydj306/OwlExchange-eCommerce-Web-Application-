@@ -388,15 +388,48 @@ export default function AdminPage() {
                                                 </span>
                                             </td>
                                             <td>{item.tags}</td>
-                                            <td>
-                                                <div className="action-buttons">
-                                                    <button className="btn-view" title="View">
-                                                        <span>👁️</span>
+                                            <td>  
+                                            <div className="action-buttons">
+
+                                                {/* ✅ Only show these if item.status === "pending" */}
+                                                {item.status === "pending" && (
+                                                <>
+                                                    <button
+                                                    className="btn-approve"
+                                                    title="Approve"
+                                                    onClick={() => handleApprove(item.id)}
+                                                    >
+                                                    Approve
                                                     </button>
-                                                    <button className="btn-delete" title="Delete">
-                                                        <span>🗑️</span>
+
+                                                    <button
+                                                    className="btn-reject"
+                                                    title="Reject"
+                                                    onClick={() => handleReject(item.id)}
+                                                    >
+                                                    Reject
                                                     </button>
-                                                </div>
+                                                </>
+                                                )}
+
+                                                {/* 👁️ View button */}
+                                                <button
+                                                className="btn-view"
+                                                title="View"
+                                                onClick={() => handleView(item.id)}
+                                                >
+                                                <span>👁️</span>
+                                                </button>
+
+                                                {/* 🗑️ Delete button */}
+                                                <button
+                                                className="btn-delete"
+                                                title="Delete"
+                                                onClick={() => handleDelete(item.id)}
+                                                >
+                                                <span>🗑️</span>
+                                                </button>
+                                            </div>
                                             </td>
                                         </tr>
                                     ))}
