@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AdminPage.css";
 
 export default function AdminPage() {
@@ -6,6 +7,9 @@ export default function AdminPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("All Items");
     const [activeUsers, setActiveUsers] = useState(0);
+
+    const navigate = useNavigate();
+
 
 
     const handleLogout = () => {
@@ -456,7 +460,7 @@ export default function AdminPage() {
                                                 <button
                                                 className="btn-view"
                                                 title="View"
-                                                onClick={() => handleView(item.id)}
+                                                onClick={() => navigate(`/item/${item.id}`)}
                                                 >
                                                 <span>👁️</span>
                                                 </button>
