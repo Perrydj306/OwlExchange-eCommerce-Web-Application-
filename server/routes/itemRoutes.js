@@ -130,4 +130,34 @@ router.put("/:id/approve", async (req, res) => {
   }
 });
 
+// Reject an item and move it to RejectedItems
+router.put("/:id/reject", async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    // Get the item data first
+    const result = await sql.query`SELECT * FROM Items WHERE id = ${itemId}`;
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    const item = result.recordset[0];
+
+    // Insert it into RejectedItems with status = 'rejected'
+    await sql.query`
+      INSERT INTO RejectedItems (id, title, category, condition, price, description, status, tags, contactMethod, transactionType, imageUrl, createdAt)
+      VALUES (${item.id}, ${item.title}, ${item.category}, ${item.condition}, ${item.price}, ${item.description}, 'rejected', ${item.tags}, ${item.contactMethod}, ${item.transactionType}, ${item.imageUrl}, ${item.createdAt})
+    `;
+
+    // Delete it from Items
+    await sql.query`DELETE FROM Items WHERE id = ${itemId}`;
+
+    res.json({ message: "Item rejected and moved to RejectedItems" });
+  } catch (err) {
+    console.error("Error rejecting item:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 module.exports = router;

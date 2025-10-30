@@ -127,6 +127,26 @@ export default function AdminPage() {
   }
 };
 
+    const handleReject = async (itemId) => {
+  if (!window.confirm("Are you sure you want to reject this item?")) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/items/${itemId}/reject`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) throw new Error("Failed to reject item");
+
+    alert("Item successfully rejected!");
+
+    // Refresh the UI by removing the rejected item locally
+    setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  } catch (err) {
+    console.error("Error rejecting item:", err);
+    alert("Error rejecting item.");
+  }
+};
+
     const handleBanUser = async (userId) => {
   const confirmBan = window.confirm(
     "Are you sure you want to ban this user? Their profile will be removed."
@@ -439,15 +459,6 @@ export default function AdminPage() {
                                                 onClick={() => handleView(item.id)}
                                                 >
                                                 <span>👁️</span>
-                                                </button>
-
-                                                {/* 🗑️ Delete button */}
-                                                <button
-                                                className="btn-delete"
-                                                title="Delete"
-                                                onClick={() => handleDelete(item.id)}
-                                                >
-                                                <span>🗑️</span>
                                                 </button>
                                             </div>
                                             </td>
