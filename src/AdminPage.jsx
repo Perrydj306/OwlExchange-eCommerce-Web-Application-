@@ -105,7 +105,27 @@ export default function AdminPage() {
   }
 };
 
+    const handleApprove = async (itemId) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/items/${itemId}/approve`, {
+      method: "PUT",
+    });
 
+    if (!response.ok) throw new Error("Failed to approve item");
+
+    alert("Item approved!");
+    
+    setItems(prevItems =>
+        prevItems.map(item =>
+            item.id === itemId ? { ...item, status: "active" } : item
+      )
+    );
+
+  } catch (err) {
+    console.error("Error approving item:", err);
+    alert("Error approving item.");
+  }
+};
 
     const handleBanUser = async (userId) => {
   const confirmBan = window.confirm(
@@ -149,10 +169,10 @@ export default function AdminPage() {
     if (!response.ok) throw new Error("Failed to reset password");
     const data = await response.json();
 
-    alert("✅ " + data.message);
+    alert("Success!" + data.message);
   } catch (err) {
     console.error("Error resetting password:", err);
-    alert("❌ Failed to reset password");
+    alert("Failed to reset password");
   }
 };
 

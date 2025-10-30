@@ -4,6 +4,7 @@ const sql = require("mssql");
 const multer = require("multer");
 const path = require("path");
 
+
 // ===== Multer setup for image uploads =====
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -115,6 +116,17 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error("Error fetching item:", err);
     res.status(500).json({ error: "Failed to fetch item" });
+  }
+});
+
+// Approve an item (set status = 'active')
+router.put("/:id/approve", async (req, res) => {
+  try {
+    await sql.query`UPDATE Items SET status = 'active' WHERE id = ${req.params.id}`;
+    res.json({ message: "Item approved successfully" });
+  } catch (err) {
+    console.error("Error approving item:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
