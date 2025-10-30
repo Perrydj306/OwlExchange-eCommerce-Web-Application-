@@ -14,6 +14,8 @@ export default function AdminPage() {
         navigate('/dashboard');
     };
 
+
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -108,6 +110,47 @@ export default function AdminPage() {
             console.error("Error toggling user status:", error);
         }
     };
+    const handleApprove = async (itemId) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/items/${itemId}/approve`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) throw new Error("Failed to approve item");
+
+    alert("Item approved!");
+    
+    setItems(prevItems =>
+        prevItems.map(item =>
+            item.id === itemId ? { ...item, status: "active" } : item
+      )
+    );
+
+  } catch (err) {
+    console.error("Error approving item:", err);
+    alert("Error approving item.");
+  }
+};
+
+    const handleReject = async (itemId) => {
+  if (!window.confirm("Are you sure you want to reject this item?")) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/items/${itemId}/reject`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) throw new Error("Failed to reject item");
+
+    alert("Item successfully rejected!");
+
+    // Refresh the UI by removing the rejected item locally
+    setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  } catch (err) {
+    console.error("Error rejecting item:", err);
+    alert("Error rejecting item.");
+  }
+};
 
     const handleBanUser = async (userId) => {
         const confirmBan = window.confirm(
@@ -132,9 +175,30 @@ export default function AdminPage() {
         }
     };
 
-    const handleEditUser = (userId) => {
-        console.log("Edit user:", userId);
-    };
+    const handleEditUser = async (userId) => {
+  const newPassword = prompt("Enter a new password for this user:");
+  if (!newPassword) return alert("Password reset cancelled.");
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/users/${userId}/reset-password`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to reset password");
+    const data = await response.json();
+
+    alert("Success!" + data.message);
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    alert("Failed to reset password");
+  }
+};
+
 
     const handleReviewReport = (reportId) => {
         console.log("Review report:", reportId);
@@ -369,15 +433,39 @@ export default function AdminPage() {
                                                 </span>
                                             </td>
                                             <td>{item.tags}</td>
-                                            <td>
-                                                <div className="action-buttons">
-                                                    <button className="btn-view" title="View">
-                                                        <span>👁️</span>
+                                            <td>  
+                                            <div className="action-buttons">
+
+                                                {/* ✅ Only show these if item.status === "pending" */}
+                                                {item.status === "pending" && (
+                                                <>
+                                                    <button
+                                                    className="btn-approve"
+                                                    title="Approve"
+                                                    onClick={() => handleApprove(item.id)}
+                                                    >
+                                                    Approve
                                                     </button>
-                                                    <button className="btn-delete" title="Delete">
-                                                        <span>🗑️</span>
+
+                                                    <button
+                                                    className="btn-reject"
+                                                    title="Reject"
+                                                    onClick={() => handleReject(item.id)}
+                                                    >
+                                                    Reject
                                                     </button>
-                                                </div>
+                                                </>
+                                                )}
+
+                                                {/* 👁️ View button */}
+                                                <button
+                                                className="btn-view"
+                                                title="View"
+                                                onClick={() => navigate(`/item/${item.id}`)}
+                                                >
+                                                <span>👁️</span>
+                                                </button>
+                                            </div>
                                             </td>
                                         </tr>
                                     ))}

@@ -4,6 +4,7 @@ const sql = require("mssql");
 const multer = require("multer");
 const path = require("path");
 
+
 // ===== Multer setup for image uploads =====
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -67,7 +68,7 @@ router.get("/", async (req, res) => {
   try {
     const result = await sql.query(`
       SELECT id, title, description, category, condition, price, tags, contactMethod,
-             transactionType, imageUrl, createdAt
+             transactionType, imageUrl, status, createdAt
       FROM Items
       ORDER BY createdAt DESC
     `);
@@ -85,9 +86,9 @@ router.get("/search", async (req, res) => {
   try {
     let query = `
       SELECT id, title, description, category, condition, price, tags, contactMethod,
-             transactionType, imageUrl, createdAt
+             transactionType, imageUrl, status, createdAt
       FROM Items
-      WHERE 1=1
+      WHERE status = 'active'
     `;
 
     if (keyword) query += ` AND (title LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`;
@@ -117,5 +118,46 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch item" });
   }
 });
+
+// Approve an item (set status = 'active')
+router.put("/:id/approve", async (req, res) => {
+  try {
+    await sql.query`UPDATE Items SET status = 'active' WHERE id = ${req.params.id}`;
+    res.json({ message: "Item approved successfully" });
+  } catch (err) {
+    console.error("Error approving item:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Reject an item and move it to RejectedItems
+router.put("/:id/reject", async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    // Get the item data first
+    const result = await sql.query`SELECT * FROM Items WHERE id = ${itemId}`;
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+
+    const item = result.recordset[0];
+
+    // Insert it into RejectedItems with status = 'rejected'
+    await sql.query`
+      INSERT INTO RejectedItems (id, title, category, condition, price, description, status, tags, contactMethod, transactionType, imageUrl, createdAt)
+      VALUES (${item.id}, ${item.title}, ${item.category}, ${item.condition}, ${item.price}, ${item.description}, 'rejected', ${item.tags}, ${item.contactMethod}, ${item.transactionType}, ${item.imageUrl}, ${item.createdAt})
+    `;
+
+    // Delete it from Items
+    await sql.query`DELETE FROM Items WHERE id = ${itemId}`;
+
+    res.json({ message: "Item rejected and moved to RejectedItems" });
+  } catch (err) {
+    console.error("Error rejecting item:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 module.exports = router;

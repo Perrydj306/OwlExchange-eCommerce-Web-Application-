@@ -26,42 +26,55 @@ export default function Login() {
   const [forgotMessage, setForgotMessage] = useState("");
 
   //  Login
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    if (!email || !password) {
-      setLoginError("Please fill in all fields");
-      return;
-    }
+  if (!email || !password) {
+    setLoginError("Please fill in all fields");
+    return;
+  }
 
-    try {
-      const res = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setLoginError("");
+    // ✅ Handle requirePasswordChange response
+    if (res.status === 403) {
+      const data = await res.json().catch(() => null);
 
-        const emailDomain = data.user.email.split("@")[1];
-        if (emailDomain === "owladmin.com") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
-      } else {
-        const errMsg = await res.text();
-        setLoginError(errMsg);
+      if (data?.requireChange) {
+        localStorage.setItem("resetUserId", data.userId);
+        alert("You must change your password before logging in.");
+        navigate("/change-password");
+        return;
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      setLoginError("Server error. Please try again later.");
     }
-  };
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setLoginError("");
+
+      const emailDomain = data.user.email.split("@")[1];
+      if (emailDomain === "owladmin.com") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } else {
+      const errMsg = await res.text();
+      setLoginError(errMsg);
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    setLoginError("Server error. Please try again later.");
+  }
+};
+
 
   // Register
   const handleRegister = async (e) => {

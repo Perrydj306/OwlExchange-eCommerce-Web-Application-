@@ -6,20 +6,23 @@ import UserDashboard from "./UserDashboard";
 import LandingPage from "./LandingPage";
 import SearchResults from "./SearchResults";
 import ItemDetails from "./ItemDetails.jsx";
+import ChangePassword from "./ChangePassword"; 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} /> {/* Landing Page*/}
+        <Route path="/" element={<LandingPage />} /> {/* Landing Page */}
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminPage />} /> {/* Admin route */}
         <Route path="/dashboard" element={<UserDashboard />} /> {/* User page */}
         <Route path="/search" element={<SearchResults />} /> {/* Item results */}
         <Route path="/item/:id" element={<ItemDetails />} /> {/* Item details */}
+        <Route path="/change-password" element={<ChangePassword />} /> {/* Change Password */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
