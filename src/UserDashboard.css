@@ -175,6 +175,21 @@ body {
   box-shadow: none !important;
 }
 
+/* Back to Admin Button */
+.back-admin-btn {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  padding: 8px 20px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+.back-admin-btn:hover {
+  background-color: #d97706 !important;
+}
+
 .share-item-btn:hover {
   background-color: #1f2937 !important;
 }

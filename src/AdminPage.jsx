@@ -1,47 +1,53 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AdminPage.css";
 
 export default function AdminPage() {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("items");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("All Items");
     const [activeUsers, setActiveUsers] = useState(0);
 
+    const handleBackToMarketplace = () => {
+        // Navigate to user dashboard while keeping admin logged in
+        navigate('/dashboard');
+    };
 
     const handleLogout = () => {
-        window.location.href = "/";
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate('/');
     };
 
     const [items, setItems] = useState([]);
     useEffect(() => {
-  if (activeTab === "items") {
-    fetch("http://localhost:5000/api/items")
-      .then(res => res.json())
-      .then(data => setItems(data))
-      .catch(err => console.error("Error fetching items:", err));
-  }
-}, [activeTab]);
-
+        if (activeTab === "items") {
+            fetch("http://localhost:5000/api/items")
+                .then(res => res.json())
+                .then(data => setItems(data))
+                .catch(err => console.error("Error fetching items:", err));
+        }
+    }, [activeTab]);
 
     const [users, setUsers] = useState([]);
     useEffect(() => {
-  if (activeTab === "users") {
-    fetch("http://localhost:5000/api/users") // backend port = 5000
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data);
-      })
-      .catch(err => console.error("Error fetching users:", err));
-  }
-}, [activeTab]);
+        if (activeTab === "users") {
+            fetch("http://localhost:5000/api/users")
+                .then(res => res.json())
+                .then(data => {
+                    setUsers(data);
+                })
+                .catch(err => console.error("Error fetching users:", err));
+        }
+    }, [activeTab]);
 
     useEffect(() => {
-    fetch("http://localhost:5000/api/users/count/active")
-        .then((res) => res.json())
-        .then((data) => setActiveUsers(data.activeUsers))
-        .catch((err) => console.error("Error fetching active user count:", err));
+        fetch("http://localhost:5000/api/users/count/active")
+            .then((res) => res.json())
+            .then((data) => setActiveUsers(data.activeUsers))
+            .catch((err) => console.error("Error fetching active user count:", err));
     }, []);
-
 
     const reports = [
         {
@@ -78,59 +84,53 @@ export default function AdminPage() {
     );
 
     const handleSuspendUser = async (userId) => {
-  try {
-    const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-    });
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/${userId}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+            });
 
-    if (!response.ok) throw new Error("Failed to update user status");
-    const data = await response.json();
+            if (!response.ok) throw new Error("Failed to update user status");
+            const data = await response.json();
 
-    // Update the UI without refetching all users
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, status: data.newStatus } : user
-      )
-    );
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user.id === userId ? { ...user, status: data.newStatus } : user
+                )
+            );
 
-    // Refresh the Active Users count in real time
-    fetch("http://localhost:5000/api/users/count/active")
-      .then((res) => res.json())
-      .then((data) => setActiveUsers(data.activeUsers))
-      .catch((err) => console.error("Error refreshing active user count:", err));
+            fetch("http://localhost:5000/api/users/count/active")
+                .then((res) => res.json())
+                .then((data) => setActiveUsers(data.activeUsers))
+                .catch((err) => console.error("Error refreshing active user count:", err));
 
-  } catch (error) {
-    console.error("Error toggling user status:", error);
-  }
-};
-
-
+        } catch (error) {
+            console.error("Error toggling user status:", error);
+        }
+    };
 
     const handleBanUser = async (userId) => {
-  const confirmBan = window.confirm(
-    "Are you sure you want to ban this user? Their profile will be removed."
-  );
-  if (!confirmBan) return;
+        const confirmBan = window.confirm(
+            "Are you sure you want to ban this user? Their profile will be removed."
+        );
+        if (!confirmBan) return;
 
-  try {
-    const response = await fetch(`http://localhost:5000/api/users/${userId}/ban`, {
-      method: "DELETE",
-    });
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/${userId}/ban`, {
+                method: "DELETE",
+            });
 
-    if (!response.ok) throw new Error("Failed to ban user");
-    await response.json();
+            if (!response.ok) throw new Error("Failed to ban user");
+            await response.json();
 
-    // Instantly remove the banned user from the visible table
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
 
-    alert("✅ User has been banned and removed from the list.");
-  } catch (error) {
-    console.error("Error banning user:", error);
-    alert("❌ Failed to ban user.");
-  }
-};
-
+            alert("✅ User has been banned and removed from the list.");
+        } catch (error) {
+            console.error("Error banning user:", error);
+            alert("❌ Failed to ban user.");
+        }
+    };
 
     const handleEditUser = (userId) => {
         console.log("Edit user:", userId);
@@ -148,7 +148,6 @@ export default function AdminPage() {
         console.log("Take action on report:", reportId);
     };
 
-    
     return (
         <div className="admin-dashboard">
             {/* Header */}
@@ -162,7 +161,10 @@ export default function AdminPage() {
                     </div>
 
                     <div className="top-right-controls">
-                        <button className="back-btn">
+                        <button 
+                            className="back-btn"
+                            onClick={handleBackToMarketplace}
+                        >
                             Back to Marketplace
                         </button>
                         <div className="flex items-center gap-2 user-area">
@@ -354,7 +356,7 @@ export default function AdminPage() {
                                     {filteredItems.map((item) => (
                                         <tr key={item.id}>
                                             <td style={{ fontWeight: 600 }}>{item.title}</td>
-                                            <td>{item.seller}</td> {/* Not yet defined in db */}
+                                            <td>{item.seller}</td>
                                             <td>{item.category}</td>
                                             <td>
                                                 <span style={{ color: item.price === "FREE" ? "#4caf50" : "#1a1a1a", fontWeight: item.price === "FREE" ? 600 : 400 }}>
@@ -363,7 +365,7 @@ export default function AdminPage() {
                                             </td>
                                             <td>
                                                 <span className="status-badge status-active">
-                                                    {item.status} {/* Not yet defined in db */} 
+                                                    {item.status}
                                                 </span>
                                             </td>
                                             <td>{item.tags}</td>
@@ -410,17 +412,14 @@ export default function AdminPage() {
                                         <td className="py-4 px-4 font-medium text-gray-900">{user.username}</td>
                                         <td className="py-4 px-4 text-gray-700">{user.email}</td>
                                         <td className="py-4 px-4 text-gray-700">{user.id}</td>
-                                        {/* Change to actual items posted */}
                                         <td className="py-4 px-4 text-gray-700">0</td>
                                         <td className="py-4 px-4">
-                                            {/* Change to actual trust score */}
                                             <span className="px-3 py-1 bg-black text-white text-sm rounded-full font-semibold">
                                             0%
                                             </span>
                                         </td>
                                         <td className="py-4 px-4 text-gray-700">{user.status}</td>
                                         <td className="py-4 px-4">
-                                            {/* Action Buttons */}
                                             <div className="flex gap-2 items-center">
                                             <button
                                                 onClick={() => handleEditUser(user.id)}

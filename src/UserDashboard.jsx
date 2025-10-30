@@ -52,6 +52,10 @@ const UserDashboard = () => {
     }
   };
 
+  const handleBackToAdmin = () => {
+    navigate('/admin');
+  };
+
   return (
     <Box className="dashboard-wrapper">
       {/* Header Bar */}
@@ -86,8 +90,20 @@ const UserDashboard = () => {
             }}
           />
         </Box>
-
         <Box className="header-right">
+
+          {/* 🆕 Show only for admins */}
+          {currentUser?.role === "admin" && (
+            <Button
+              variant="contained"
+              className="back-admin-btn"
+              startIcon={<AdminIcon />}
+              onClick={handleBackToAdmin}
+            >
+              Back to Admin
+            </Button>
+          )}
+
           <Button
             variant="contained"
             className="post-item-btn"
