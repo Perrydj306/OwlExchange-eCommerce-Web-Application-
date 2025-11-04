@@ -60,6 +60,10 @@ const handleLogin = async (e) => {
 
     // If not OK, show backend message directly
     if (!res.ok) {
+      // Clear any old user data if login failed
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
       setLoginError(
         typeof data === "string"
           ? data
