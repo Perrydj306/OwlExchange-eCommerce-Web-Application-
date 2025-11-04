@@ -63,6 +63,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ===== Get Total Item Count =====
+router.get("/count", async (req, res) => {
+  try {
+    const pool = await sql.connect();
+    const result = await pool
+      .request()
+      .query("SELECT COUNT(*) AS totalItems FROM Items");
+
+    res.json({ totalItems: result.recordset[0].totalItems });
+  } catch (err) {
+    console.error("Error counting items:", err);
+    res.status(500).json({ error: "Failed to get item count" });
+  }
+});
+
 // ===== Get All Items =====
 router.get("/", async (req, res) => {
   try {
@@ -119,6 +134,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
 // Approve an item (set status = 'active')
 router.put("/:id/approve", async (req, res) => {
   try {
@@ -158,6 +174,9 @@ router.put("/:id/reject", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
 
 
 module.exports = router;

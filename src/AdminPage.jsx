@@ -8,6 +8,8 @@ export default function AdminPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("All Items");
     const [activeUsers, setActiveUsers] = useState(0);
+    const [itemCount, setItemCount] = useState(0);
+
 
     const handleBackToMarketplace = () => {
         // Navigate to user dashboard while keeping admin logged in
@@ -50,6 +52,14 @@ export default function AdminPage() {
             .then((data) => setActiveUsers(data.activeUsers))
             .catch((err) => console.error("Error fetching active user count:", err));
     }, []);
+
+    useEffect(() => {
+  fetch("http://localhost:5000/api/items/count")
+    .then((res) => res.json())
+    .then((data) => setItemCount(data.totalItems))
+    .catch((err) => console.error("Error fetching item count:", err));
+}, []);
+
 
     const reports = [
         {
@@ -269,7 +279,7 @@ export default function AdminPage() {
                                 <span className="stat-emoji">📦</span>
                             </div>
                             <div className="stat-title">Total Items</div>
-                            <div className="stat-value">5</div>
+                            <div className="stat-value">{itemCount}</div>
                             <div className="stat-subtitle">0 pending review</div>
                         </div>
 
