@@ -20,7 +20,9 @@ router.post("/", async (req, res) => {
       .query("SELECT * FROM BannedUsers WHERE email = @email");
 
     if (banned.recordset.length > 0) {
-      return res.status(403).send("Your account has been banned. Please contact the administrator.");
+      return res
+        .status(403)
+        .send("Your account has been banned. Please contact the administrator.");
     }
 
     // Find user
@@ -35,43 +37,12 @@ router.post("/", async (req, res) => {
 
     const user = userResult.recordset[0];
 
-    // Block inactive accounts
-    if (user.status && user.status.toLowerCase() === "inactive") {
-      return res.status(403).send("Your account is inactive. Please contact the administrator.");
+    // Handle NULL or inactive status safely
+    if (!user.status || user.status.toLowerCase() === "inactive") {
+      return res
+        .status(403)
+        .send("Your account has been deactivated. Please contact the administrator.");
     }
-
-
-// CHANGE PASSWORD ROUTE
-router.post("/change-password", async (req, res) => {
-  const { userId, newPassword } = req.body;
-
-  console.log("Received password change request for user:", userId);
-
-  if (!userId || !newPassword) {
-    return res.status(400).json({ error: "User ID and new password are required." });
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    const pool = await sql.connect();
-    const request = pool.request();
-    request.input("hashedPassword", sql.VarChar(sql.MAX), hashedPassword);
-    request.input("userId", sql.Int, userId);
-
-    await request.query(`
-      UPDATE Users
-      SET password = @hashedPassword, requirePasswordChange = 0
-      WHERE id = @userId
-    `);
-
-    console.log("✅ Password updated successfully for user:", userId);
-    res.json({ message: "Password updated successfully." });
-  } catch (err) {
-    console.error("❌ Error updating password:", err.message, err.stack);
-    res.status(500).json({ error: "Server error. Please try again later." });
-  }
-});
 
     // Require password change check
     if (user.requirePasswordChange) {
@@ -108,6 +79,38 @@ router.post("/change-password", async (req, res) => {
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Server error. Please try again later.");
+  }
+});
+
+// CHANGE PASSWORD ROUTE
+router.post("/change-password", async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  console.log("Received password change request for user:", userId);
+
+  if (!userId || !newPassword) {
+    return res.status(400).json({ error: "User ID and new password are required." });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const pool = await sql.connect();
+    await pool
+      .request()
+      .input("hashedPassword", sql.VarChar(sql.MAX), hashedPassword)
+      .input("userId", sql.Int, userId)
+      .query(`
+        UPDATE Users
+        SET password = @hashedPassword, requirePasswordChange = 0
+        WHERE id = @userId
+      `);
+
+    console.log("✅ Password updated successfully for user:", userId);
+    res.json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error("❌ Error updating password:", err.message, err.stack);
+    res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
 

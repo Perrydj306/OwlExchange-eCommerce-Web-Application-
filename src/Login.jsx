@@ -41,39 +41,50 @@ const handleLogin = async (e) => {
       body: JSON.stringify({ email, password }),
     });
 
-    // ✅ Handle requirePasswordChange response
-    if (res.status === 403) {
-      const data = await res.json().catch(() => null);
-
-      if (data?.requireChange) {
-        localStorage.setItem("resetUserId", data.userId);
-        alert("You must change your password before logging in.");
-        navigate("/change-password");
-        return;
-      }
+    // Try to parse JSON, but fallback to plain text if necessary
+    const contentType = res.headers.get("content-type");
+    let data;
+    if (contentType && contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      data = await res.text();
     }
 
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setLoginError("");
+    // Handle password-change requirement
+    if (res.status === 403 && data?.requireChange) {
+      localStorage.setItem("resetUserId", data.userId);
+      alert("You must change your password before logging in.");
+      navigate("/change-password");
+      return;
+    }
 
-      const emailDomain = data.user.email.split("@")[1];
-      if (emailDomain === "owladmin.com") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+    // If not OK, show backend message directly
+    if (!res.ok) {
+      setLoginError(
+        typeof data === "string"
+          ? data
+          : data?.error || "Login failed. Please try again."
+      );
+      return;
+    }
+
+    // Successful login
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    setLoginError("");
+
+    const emailDomain = data.user.email.split("@")[1];
+    if (emailDomain === "owladmin.com") {
+      navigate("/admin");
     } else {
-      const errMsg = await res.text();
-      setLoginError(errMsg);
+      navigate("/dashboard");
     }
   } catch (err) {
     console.error("Login error:", err);
     setLoginError("Server error. Please try again later.");
   }
 };
+
 
 
   // Register
