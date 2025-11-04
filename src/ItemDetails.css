@@ -68,31 +68,70 @@
   align-items: start;
 }
 
-/* Image card */
+/* --- Main Image Wrapper --- */
 .item-image-card {
+  position: relative;
+  width: 100%;
+  max-width: 650px;         /* smaller display size */
+  height: 300px;            /* fixed uniform height */
+  margin: 0 auto 25px;      /* centers the image nicely */
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
-  border: 1px solid rgba(10,20,30,0.04);
-  box-shadow: 0 8px 30px rgba(10,20,30,0.06);
+  background: #f9fafb;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-in;          /* hint that it's clickable */
 }
+
 .item-image-card .item-image {
   width: 100%;
-  height: 420px;
+  height: 100%;
   object-fit: cover;
-  display: block;
+  object-position: center;
+  transition: transform 0.3s ease;
 }
 
-/* Info column */
-.item-info-column { display:flex; flex-direction:column; gap:18px }
-
-.item-info-card {
-  padding: 20px;
-  border-radius: 12px;
-  background: #fff;
-  border: 1px solid rgba(10,20,30,0.04);
-  box-shadow: 0 6px 20px rgba(10,20,30,0.04);
+/* Hover effect */
+.item-image-card:hover .item-image {
+  transform: scale(1.05);
 }
+
+/* Smaller screens */
+@media (max-width: 768px) {
+  .item-image-card {
+    max-width: 100%;
+    height: 220px;
+  }
+}
+
+/* --- Modal Image View --- */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
 
 .item-title { font-weight: 800; font-size: 1.25rem; margin-bottom: 8px }
 

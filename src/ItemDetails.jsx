@@ -29,6 +29,8 @@ const ItemDetails = () => {
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/items/${id}`)
@@ -66,8 +68,12 @@ const ItemDetails = () => {
         Back
       </Button>
 
-              {/* Main Item Image */}
-        <Card className="item-image-card" elevation={2}>
+        {/* Main Item Image with Click-to-Zoom */}
+        <Card
+          className="item-image-card"
+          elevation={2}
+          onClick={() => setShowModal(true)} // open modal when clicked
+        >
           <img
             src={item.imageUrl || "/placeholder.png"}
             alt={item.title}
@@ -75,8 +81,16 @@ const ItemDetails = () => {
           />
         </Card>
 
-{/* Main Info Container */}
-<Box className="item-main-info">
+        {/* Image Modal (click outside to close) */}
+        {showModal && (
+          <div className="image-modal" onClick={() => setShowModal(false)}>
+            <img src={item.imageUrl || "/placeholder.png"} alt={item.title} />
+          </div>
+        )}
+
+
+        {/* Main Info Container */}
+        <Box className="item-main-info">
 
 
         {/* Right: Item Info */}
@@ -197,29 +211,32 @@ const ItemDetails = () => {
             </Typography>
 
             <Box className="seller-details">
-              <Avatar sx={{ bgcolor: "#1976d2" }}>SJ</Avatar>
+              <Avatar sx={{ bgcolor: "#1976d2" }}>
+                {item.sellerName ? item.sellerName.charAt(0).toUpperCase() : "?"}
+              </Avatar>
               <Box>
                 <Typography variant="body1" fontWeight={600}>
-                  Sarah Johnson
+                  {item.sellerName || "Unknown Seller"}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  KSU Student
+                  {item.sellerEmail || "No email provided"}
                 </Typography>
               </Box>
             </Box>
 
             <Box className="seller-meta">
               <Typography variant="body2">
-                <EmailIcon fontSize="small" /> Contact via KSU email
+                <EmailIcon fontSize="small" /> Contact via listed email
               </Typography>
               <Typography variant="body2">
-                <VerifiedIcon fontSize="small" /> Verified student
+                <VerifiedIcon fontSize="small" /> Verified Seller
               </Typography>
               <Typography variant="body2">
-                <CalendarMonthIcon fontSize="small" /> Member since 2024
+                <CalendarMonthIcon fontSize="small" /> Member since 2025
               </Typography>
             </Box>
           </Card>
+
 
           {/* Safety Tips */}
           <Card className="safety-card" elevation={1}>

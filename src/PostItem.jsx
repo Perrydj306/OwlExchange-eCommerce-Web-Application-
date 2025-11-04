@@ -42,13 +42,13 @@ const PostItem = ({ open, onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  // 🖼️ Handle image uploads
+  // Handle image uploads
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -74,37 +74,39 @@ const PostItem = ({ open, onClose }) => {
     }
   };
 
+  // Submit new item with userId automatically
   const handleSubmit = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          transactionType,
-        }),
-      });
-
-      if (response.ok) {
-        alert("Item posted successfully!");
-        onClose();
-      } else {
-        alert("Failed to post item.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Server connection failed.");
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.id) {
+      alert("You must be logged in to post an item.");
+      return;
     }
-  };
+
+    const response = await fetch("http://localhost:5000/api/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,
+        transactionType,
+        userId: user.id, // attach the logged-in user's ID
+      }),
+    });
+
+    if (response.ok) {
+      alert("Item posted successfully!");
+      onClose();
+    } else {
+      alert("Failed to post item.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Server connection failed.");
+  }
+};
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      className="post-item-dialog"
-    >
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth className="post-item-dialog">
       <DialogTitle className="dialog-title">
         <Typography variant="h5" className="modal-title">
           Post an Item
@@ -116,8 +118,8 @@ const PostItem = ({ open, onClose }) => {
 
       <DialogContent className="dialog-content">
         {/* Transaction Type Tabs */}
-        <Tabs 
-          value={transactionType} 
+        <Tabs
+          value={transactionType}
           onChange={handleTabChange}
           className="transaction-tabs"
         >
@@ -174,7 +176,9 @@ const PostItem = ({ open, onClose }) => {
                   onChange={handleInputChange}
                   displayEmpty
                 >
-                  <MenuItem value="" disabled>Select category</MenuItem>
+                  <MenuItem value="" disabled>
+                    Select category
+                  </MenuItem>
                   <MenuItem value="textbooks">Textbooks</MenuItem>
                   <MenuItem value="electronics">Electronics</MenuItem>
                   <MenuItem value="furniture">Dorm Essentials</MenuItem>
@@ -197,7 +201,9 @@ const PostItem = ({ open, onClose }) => {
                   onChange={handleInputChange}
                   displayEmpty
                 >
-                  <MenuItem value="" disabled>Select condition</MenuItem>
+                  <MenuItem value="" disabled>
+                    Select condition
+                  </MenuItem>
                   <MenuItem value="new">New</MenuItem>
                   <MenuItem value="like-new">Like New</MenuItem>
                   <MenuItem value="good">Good</MenuItem>
@@ -232,11 +238,7 @@ const PostItem = ({ open, onClose }) => {
             <Typography variant="body2" className="field-label">
               Photos
             </Typography>
-            <Button
-              variant="outlined"
-              component="label"
-              startIcon={<UploadIcon />}
-            >
+            <Button variant="outlined" component="label" startIcon={<UploadIcon />}>
               Upload Photo
               <input type="file" hidden accept="image/*" onChange={handleFileUpload} />
             </Button>
@@ -247,7 +249,11 @@ const PostItem = ({ open, onClose }) => {
                 <img
                   src={formData.imageUrl}
                   alt="Uploaded preview"
-                  style={{ width: "150px", borderRadius: "8px", marginTop: "10px" }}
+                  style={{
+                    width: '150px',
+                    borderRadius: '8px',
+                    marginTop: '10px',
+                  }}
                 />
               </Box>
             )}

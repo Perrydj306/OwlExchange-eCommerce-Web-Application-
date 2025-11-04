@@ -48,13 +48,15 @@ router.post("/", async (req, res) => {
     request.input("contactMethod", sql.VarChar(100), contactMethod);
     request.input("transactionType", sql.Int, transactionType);
     request.input("imageUrl", sql.VarChar(500), imageUrl || null);
+    request.input("userId", sql.Int, req.body.userId);
 
-    await request.query(`
-      INSERT INTO Items 
-      (title, description, category, condition, price, tags, contactMethod, transactionType, imageUrl, createdAt)
-      VALUES 
-      (@title, @description, @category, @condition, @price, @tags, @contactMethod, @transactionType, @imageUrl, GETDATE())
-    `);
+   await request.query(`
+  INSERT INTO Items 
+  (title, description, category, condition, price, tags, contactMethod, transactionType, imageUrl, userId, createdAt)
+  VALUES 
+  (@title, @description, @category, @condition, @price, @tags, @contactMethod, @transactionType, @imageUrl, @userId, GETDATE())
+`);
+
 
     res.status(201).json({ message: "Item added successfully" });
   } catch (err) {
@@ -120,19 +122,38 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// ===== Get Single Item by ID =====
+
+//Get user ID
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await sql.query`SELECT * FROM Items WHERE id = ${id}`;
-    if (result.recordset.length === 0)
+
+    const query = `
+      SELECT 
+        i.id, i.title, i.description, i.category, i.condition, i.price, 
+        i.tags, i.contactMethod, i.transactionType, i.imageUrl, i.status, i.createdAt,
+        u.id AS userId, u.username AS sellerName, u.email AS sellerEmail, u.role AS sellerRole, u.created_at AS sellerSince
+      FROM Items i
+      LEFT JOIN Users u ON i.userId = u.id
+      WHERE i.id = @itemId
+    `;
+
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input("itemId", sql.Int, id)
+      .query(query);
+
+    if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Item not found" });
+    }
+
     res.json(result.recordset[0]);
   } catch (err) {
-    console.error("Error fetching item:", err);
+    console.error("Error fetching item with seller:", err);
     res.status(500).json({ error: "Failed to fetch item" });
   }
 });
+
 
 
 // Approve an item (set status = 'active')
