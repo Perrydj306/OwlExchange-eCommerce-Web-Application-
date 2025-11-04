@@ -77,12 +77,9 @@ const handleLogin = async (e) => {
     localStorage.setItem("user", JSON.stringify(data.user));
     setLoginError("");
 
-    const emailDomain = data.user.email.split("@")[1];
-    if (emailDomain === "owladmin.com") {
-      navigate("/admin");
-    } else {
-      navigate("/dashboard");
-    }
+    
+navigate("/dashboard");
+
   } catch (err) {
     console.error("Login error:", err);
     setLoginError("Server error. Please try again later.");

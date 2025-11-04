@@ -6,23 +6,43 @@ import UserDashboard from "./UserDashboard";
 import LandingPage from "./LandingPage";
 import SearchResults from "./SearchResults";
 import ItemDetails from "./ItemDetails.jsx";
-import ChangePassword from "./ChangePassword"; 
+import ChangePassword from "./ChangePassword";
+import ProtectedRoute from "./ProtectedRoute"; 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} /> {/* Landing Page */}
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminPage />} /> {/* Admin route */}
-        <Route path="/dashboard" element={<UserDashboard />} /> {/* User page */}
-        <Route path="/search" element={<SearchResults />} /> {/* Item results */}
-        <Route path="/item/:id" element={<ItemDetails />} /> {/* Item details */}
-        <Route path="/change-password" element={<ChangePassword />} /> {/* Change Password */}
+        <Route path="/change-password" element={<ChangePassword />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Public item routes */}
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/item/:id" element={<ItemDetails />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

@@ -18,34 +18,36 @@ import {
   SwapHoriz as SwapIcon,
   Favorite as HeartIcon,
   Add as AddIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  AdminPanelSettings as AdminIcon // ✅ add this import
 } from '@mui/icons-material';
 import './UserDashboard.css';
 import PostItem from './PostItem';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null); // Store logged-in user info
+  const [currentUser, setCurrentUser] = useState(null);
   const [openPostModal, setOpenPostModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // Track what's typed in search
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user")); // Get user from local storage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
-      setCurrentUser(storedUser); // Set user data in state
+      setCurrentUser(storedUser);
+    } else {
+      navigate("/"); // redirect to home if not logged in
     }
-  }, []);
+  }, [navigate]);
 
   const handleSignOut = () => {
-    localStorage.removeItem("token"); // Clear token on sign out
-    localStorage.removeItem("user"); // Clear stored user info
-    navigate('/'); // Return to home page
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate('/');
   };
 
   const handleOpenPostModal = () => setOpenPostModal(true);
   const handleClosePostModal = () => setOpenPostModal(false);
 
-  // 🔍 Handle search submit
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
       navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
@@ -80,7 +82,7 @@ const UserDashboard = () => {
             className="search-bar"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearchKeyDown} // 👈 Navigate on Enter
+            onKeyDown={handleSearchKeyDown}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -90,17 +92,18 @@ const UserDashboard = () => {
             }}
           />
         </Box>
+
         <Box className="header-right">
 
-          {/* 🆕 Show only for admins */}
-          {currentUser?.role === "admin" && (
+          {/* ✅ Show only for admins */}
+          {currentUser?.role === "Admin" && (
             <Button
               variant="contained"
               className="back-admin-btn"
               startIcon={<AdminIcon />}
               onClick={handleBackToAdmin}
             >
-              Back to Admin
+              Admin Dashboard
             </Button>
           )}
 
@@ -113,12 +116,10 @@ const UserDashboard = () => {
             Post Item
           </Button>
 
-          {/* User avatar with first letter of email */}
           <Avatar className="user-avatar">
             {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
           </Avatar>
 
-          {/* Username before @ */}
           <Typography variant="body2" className="username">
             {currentUser ? currentUser.email.split("@")[0] : "Loading..."}
           </Typography>
@@ -137,7 +138,6 @@ const UserDashboard = () => {
       {/* Main Content */}
       <Box className="dashboard-content">
         <Container maxWidth="lg" className="main-content">
-          {/* Welcome Section */}
           <Box className="welcome-section">
             <Typography variant="h2" className="welcome-title">
               Welcome to <span className="owl-highlight">OwlExchange</span>
