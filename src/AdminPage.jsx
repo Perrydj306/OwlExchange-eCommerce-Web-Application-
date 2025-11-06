@@ -17,7 +17,6 @@ export default function AdminPage() {
     };
 
 
-
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -170,7 +169,7 @@ export default function AdminPage() {
 
         try {
             const response = await fetch(`http://localhost:5000/api/users/${userId}/ban`, {
-                method: "DELETE",
+                method: "POST",
             });
 
             if (!response.ok) throw new Error("Failed to ban user");
@@ -181,7 +180,7 @@ export default function AdminPage() {
             alert("✅ User has been banned and removed from the list.");
         } catch (error) {
             console.error("Error banning user:", error);
-            alert("❌ Failed to ban user.");
+            alert("Failed to ban user.");
         }
     };
 
