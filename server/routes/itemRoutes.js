@@ -80,13 +80,14 @@ router.get("/count", async (req, res) => {
   }
 });
 
-// ===== Get All Items =====
+// ===== Get All Items (exclude rejected) =====
 router.get("/", async (req, res) => {
   try {
     const result = await sql.query(`
       SELECT id, title, description, category, condition, price, tags, contactMethod,
              transactionType, imageUrl, status, createdAt
       FROM Items
+      WHERE rejected = 0 OR rejected IS NULL
       ORDER BY createdAt DESC
     `);
     res.json(result.recordset);
@@ -180,16 +181,13 @@ router.put("/:id/reject", async (req, res) => {
 
     const item = result.recordset[0];
 
-    // Insert it into RejectedItems with status = 'rejected'
-    await sql.query`
-      INSERT INTO RejectedItems (id, title, category, condition, price, description, status, tags, contactMethod, transactionType, imageUrl, createdAt)
-      VALUES (${item.id}, ${item.title}, ${item.category}, ${item.condition}, ${item.price}, ${item.description}, 'rejected', ${item.tags}, ${item.contactMethod}, ${item.transactionType}, ${item.imageUrl}, ${item.createdAt})
-    `;
+  await sql.query`
+    UPDATE Items
+    SET rejected = 1
+    WHERE id = ${item.id}
+  `;
 
-    // Delete it from Items
-    await sql.query`DELETE FROM Items WHERE id = ${itemId}`;
-
-    res.json({ message: "Item rejected and moved to RejectedItems" });
+    res.json({ message: "Item rejected" });
   } catch (err) {
     console.error("Error rejecting item:", err);
     res.status(500).json({ error: "Internal server error" });
