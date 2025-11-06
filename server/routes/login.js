@@ -32,6 +32,10 @@ router.post("/", async (req, res) => {
         .send("Your account has been deactivated. Please contact the administrator.");
     }
 
+    if (user.banned === 1 || user.banned === true) {
+      return res.status(403).send("Your account has been banned. Please contact support.");
+    }
+
     // Require password change check
     if (user.requirePasswordChange) {
       return res.status(403).json({
@@ -62,6 +66,7 @@ router.post("/", async (req, res) => {
         email: user.email,
         role: user.role,
         status: user.status,
+        banned: user.banned,
       },
     });
   } catch (err) {
