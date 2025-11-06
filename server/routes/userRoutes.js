@@ -45,7 +45,7 @@ router.post("/:id/ban", async (req, res) => {
       .input("id", sql.Int, id)
       .query(`
         UPDATE Users
-        SET banned = 1
+        SET banned = 1, status = 'Inactive'
         WHERE id = @id
       `);
 

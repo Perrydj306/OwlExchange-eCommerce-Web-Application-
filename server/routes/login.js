@@ -25,15 +25,15 @@ router.post("/", async (req, res) => {
 
     const user = userResult.recordset[0];
 
+    if (user.banned === 1 || user.banned === true) {
+      return res.status(403).send("Your account has been banned. Please contact support.");
+    }
+
     // Handle NULL or inactive status safely
     if (!user.status || user.status.toLowerCase() === "inactive") {
       return res
         .status(403)
         .send("Your account has been deactivated. Please contact the administrator.");
-    }
-
-    if (user.banned === 1 || user.banned === true) {
-      return res.status(403).send("Your account has been banned. Please contact support.");
     }
 
     // Require password change check
