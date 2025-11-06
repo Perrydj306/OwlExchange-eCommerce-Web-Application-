@@ -183,7 +183,7 @@ router.put("/:id/reject", async (req, res) => {
 
   await sql.query`
     UPDATE Items
-    SET rejected = 1
+    SET rejected = 1, status = 'rejected'
     WHERE id = ${item.id}
   `;
 
