@@ -19,7 +19,7 @@ import {
   Favorite as HeartIcon,
   Add as AddIcon,
   Logout as LogoutIcon,
-  AdminPanelSettings as AdminIcon // ✅ add this import
+  AdminPanelSettings as AdminIcon 
 } from '@mui/icons-material';
 import './UserDashboard.css';
 import PostItem from './PostItem';

@@ -11,6 +11,10 @@ function LandingPage() {
   const popupTimerRef = useRef(null);
   const POPUP_MS = 5000; // show for 5 seconds
 
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [communitySearchTerm, setCommunitySearchTerm] = useState("");
+
   const triggerPopup = () => {
     // clear any running timer
     if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
@@ -30,6 +34,18 @@ function LandingPage() {
       if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
     };
   }, []);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter" && searchTerm.trim() !== "") {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handleCommunitySearchKeyDown = (e) => {
+    if (e.key === "Enter" && communitySearchTerm.trim() !== "") {
+      navigate(`/search?q=${encodeURIComponent(communitySearchTerm.trim())}`);
+    }
+  };
 
   return (
     <div 
@@ -59,12 +75,18 @@ function LandingPage() {
           type="text"
           placeholder="Search donations, trades, sales..."
           className="search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           onClick={triggerPopup}              // show every click
           onFocus={triggerPopup}              // first focus
           onKeyDown={(e) => {                 // Enter key
             if (e.key === "Enter") {
               e.preventDefault();
-              triggerPopup();
+              if (searchTerm.trim() !== "") {
+                handleSearchKeyDown(e);
+              } else {
+                triggerPopup();
+              }
             }
           }}
         />
@@ -151,11 +173,17 @@ function LandingPage() {
             type="text"
             placeholder="Search items, descriptions, tags..."
             className="community-search-input"
+            value={communitySearchTerm}
+            onChange={(e) => setCommunitySearchTerm(e.target.value)}
             onClick={triggerPopup}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                triggerPopup();
+                if (communitySearchTerm.trim() !== "") {
+                  handleCommunitySearchKeyDown(e);
+                } else {
+                  triggerPopup();
+                }
               }
             }}
           />
