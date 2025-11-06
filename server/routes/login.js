@@ -13,18 +13,6 @@ router.post("/", async (req, res) => {
   try {
     const pool = await sql.connect();
 
-    // Check if user is banned
-    const banned = await pool
-      .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT * FROM BannedUsers WHERE email = @email");
-
-    if (banned.recordset.length > 0) {
-      return res
-        .status(403)
-        .send("Your account has been banned. Please contact the administrator.");
-    }
-
     // Find user
     const userResult = await pool
       .request()
