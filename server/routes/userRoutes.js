@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 // GET all active users (not admins)
 router.get("/", async (req, res) => {
   try {
-    const result = await sql.query`SELECT * FROM Users WHERE role = 'User'`;
+    const result = await sql.query`SELECT * FROM Users WHERE role = 'User' AND (banned = 0 OR banned IS NULL)`;
     res.json(result.recordset);
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -34,25 +34,20 @@ router.put("/:id/status", async (req, res) => {
   }
 });
 
-// Ban a user: move to BannedUsers and remove from Users
-router.delete("/:id/ban", async (req, res) => {
+// Ban a user: set banned = 1 (True)
+router.post("/:id/ban", async (req, res) => {
   const { id } = req.params;
+
   try {
     const pool = await sql.connect();
-
-    // Copy user into BannedUsers table first, then remove from Users
-    const query = `
-      BEGIN TRANSACTION;
-        INSERT INTO BannedUsers (original_user_id, username, email, password, created_at, role, status)
-        SELECT id, username, email, password, created_at, role, status
-        FROM Users
-        WHERE id = @id;
-
-        DELETE FROM Users WHERE id = @id;
-      COMMIT TRANSACTION;
-    `;
-
-    await pool.request().input("id", sql.Int, id).query(query);
+    await pool
+      .request()
+      .input("id", sql.Int, id)
+      .query(`
+        UPDATE Users
+        SET banned = 1, status = 'Inactive'
+        WHERE id = @id
+      `);
 
     res.status(200).json({ message: "User banned successfully" });
   } catch (err) {
@@ -61,17 +56,20 @@ router.delete("/:id/ban", async (req, res) => {
   }
 });
 
-// RESTORE banned user
+// Restore a banned user: set banned = 0 (False)
 router.post("/:id/restore", async (req, res) => {
   const { id } = req.params;
-  try {
-    await sql.query(`
-      INSERT INTO Users (username, email, password, created_at, role, status)
-      SELECT username, email, password, created_at, role, 'Inactive'
-      FROM BannedUsers WHERE id = ${id};
 
-      DELETE FROM BannedUsers WHERE id = ${id};
-    `);
+  try {
+    const pool = await sql.connect();
+    await pool
+      .request()
+      .input("id", sql.Int, id)
+      .query(`
+        UPDATE Users
+        SET banned = 0
+        WHERE id = @id
+      `);
 
     res.json({ message: "User restored successfully" });
   } catch (err) {
@@ -80,20 +78,6 @@ router.post("/:id/restore", async (req, res) => {
   }
 });
 
-// GET total number of active users
-router.get("/count/active", async (req, res) => {
-  try {
-    const result = await sql.query`
-      SELECT COUNT(*) AS activeCount
-      FROM Users
-      WHERE status = 'Active' AND role = 'User'
-    `;
-    res.json({ activeUsers: result.recordset[0].activeCount });
-  } catch (err) {
-    console.error("Error counting active users:", err);
-    res.status(500).json({ error: "Failed to get active user count" });
-  }
-});
 
 // RESET a user's password (for recovery)
 router.put("/:id/reset-password", async (req, res) => {

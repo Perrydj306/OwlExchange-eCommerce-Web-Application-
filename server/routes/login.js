@@ -13,18 +13,6 @@ router.post("/", async (req, res) => {
   try {
     const pool = await sql.connect();
 
-    // Check if user is banned
-    const banned = await pool
-      .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT * FROM BannedUsers WHERE email = @email");
-
-    if (banned.recordset.length > 0) {
-      return res
-        .status(403)
-        .send("Your account has been banned. Please contact the administrator.");
-    }
-
     // Find user
     const userResult = await pool
       .request()
@@ -36,6 +24,10 @@ router.post("/", async (req, res) => {
     }
 
     const user = userResult.recordset[0];
+
+    if (user.banned === 1 || user.banned === true) {
+      return res.status(403).send("Your account has been banned. Please contact support.");
+    }
 
     // Handle NULL or inactive status safely
     if (!user.status || user.status.toLowerCase() === "inactive") {
@@ -74,6 +66,7 @@ router.post("/", async (req, res) => {
         email: user.email,
         role: user.role,
         status: user.status,
+        banned: user.banned,
       },
     });
   } catch (err) {
