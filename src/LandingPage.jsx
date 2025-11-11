@@ -1,112 +1,83 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
 
-  // Popup control
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupKey, setPopupKey] = useState(0); // forces remount to restart CSS animation
-  const popupTimerRef = useRef(null);
-  const POPUP_MS = 5000; // show for 5 seconds
-
-  // Search state
-  const [searchTerm, setSearchTerm] = useState("");
-  const [communitySearchTerm, setCommunitySearchTerm] = useState("");
-
-  const triggerPopup = () => {
-    // clear any running timer
-    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-
-    // unmount then remount popup to restart animation
-    setShowPopup(false);
-    // next frame -> remount
-    requestAnimationFrame(() => {
-      setPopupKey((k) => k + 1);
-      setShowPopup(true);
-      popupTimerRef.current = setTimeout(() => setShowPopup(false), POPUP_MS);
+  useEffect(() => {
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("show");
+      });
     });
+    document.querySelectorAll(".fade-up").forEach(el => fadeObserver.observe(el));
+
+    const counters = document.querySelectorAll(".count");
+    counters.forEach(counter => {
+    const animate = () => {
+    const target = +counter.getAttribute("data-target");
+    let start = 0;
+
+    // Animation duration in ms (increase to slow down)
+    const duration = 1800;
+    const startTime = performance.now();
+
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease-out curve (smooth finish)
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const value = Math.floor(eased * target);
+      counter.innerText = value;
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        counter.innerText = target + "+";
+
+        // Bounce
+        counter.classList.add("stat-bounce");
+        setTimeout(() => counter.classList.remove("stat-bounce"), 500);
+      }
+    };
+
+    requestAnimationFrame(update);
   };
 
-  useEffect(() => {
-    return () => {
-      if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-    };
+  const onView = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        animate();
+        onView.disconnect();
+      }
+    },
+    { threshold: 0 }
+  );
+
+  onView.observe(counter);
+});
+
   }, []);
 
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter" && searchTerm.trim() !== "") {
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
-
-  const handleCommunitySearchKeyDown = (e) => {
-    if (e.key === "Enter" && communitySearchTerm.trim() !== "") {
-      navigate(`/search?q=${encodeURIComponent(communitySearchTerm.trim())}`);
-    }
-  };
-
   return (
-    <div 
-      className="landing-container"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: '100vw',
-        height: '100vh',
-        margin: 0,
-        padding: 0,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        background: 'linear-gradient(to bottom, #fff, #fff9e6)',
-        fontFamily: 'Arial, sans-serif'
-      }}
-    >
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">OwlExchange</div>
-
-        {/* Search (locked for guests) */}
-        <input
-          type="text"
-          placeholder="Search donations, trades, sales..."
-          className="search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onClick={triggerPopup}              // show every click
-          onFocus={triggerPopup}              // first focus
-          onKeyDown={(e) => {                 // Enter key
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (searchTerm.trim() !== "") {
-                handleSearchKeyDown(e);
-              } else {
-                triggerPopup();
-              }
-            }
-          }}
-        />
-
+    <div className="landing-container">
+      {/* Animated Background Blobs */}
+      <div className="blob blob-one"></div>
+      <div className="blob blob-two"></div>
+      
+      <nav className="navbar fade-up">
+        <div className="logo">OwlExchange🦉</div>
         <button className="signin-btn" onClick={() => navigate("/login")}>
           Sign In
         </button>
       </nav>
 
-      {/* Centered Popup */}
-      {showPopup && (
-        <div className="popup-center" key={popupKey}>
-          🔒 Please sign in to search items.
-        </div>
-      )}
-
-      {/* Hero Section */}
-      <header className="hero">
-        <h1 style={{ color: '#333' }}>
-          Welcome to <span className="highlight">OwlExchange</span>
+      <header className="hero fade-up">
+        <h1>
+          Welcome to <span className="highlight">OwlExchange🦉</span>
         </h1>
         <p>
           Your community platform for sharing, trading, and giving. Connect with
@@ -118,75 +89,60 @@ function LandingPage() {
         </button>
       </header>
 
-      {/* Feature Cards */}
-      <section className="features">
-        <div className="card">
+      <section className="features fade-up">
+        <div className="card fade-up">
           <span className="card-icon">🎁</span>
           <h3>Donate & Share</h3>
           <p>Give items a second life by donating to community members who need them.</p>
         </div>
-
-        <div className="card">
+        <div className="card fade-up">
           <span className="card-icon">🔄</span>
           <h3>Trade & Exchange</h3>
           <p>Swap items you no longer need for things that bring you joy.</p>
         </div>
-
-        <div className="card">
+        <div className="card fade-up">
           <span className="card-icon">👥</span>
           <h3>Build Community</h3>
           <p>Connect with neighbors and create lasting relationships through sustainable exchanges.</p>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="stats-section">
+      <section className="stats-section fade-up">
         <div className="stats-grid">
-          <div className="stat-item">
-            <div className="stat-number orange">500+</div>
+          <div className="stat-item fade-up">
+            <div className="stat-number orange count" data-target="500">0</div>
             <div className="stat-label">Items Shared</div>
           </div>
-          <div className="stat-item">
-            <div className="stat-number green">200+</div>
+          <div className="stat-item fade-up">
+            <div className="stat-number green count" data-target="200">0</div>
             <div className="stat-label">Community Members</div>
           </div>
-          <div className="stat-item">
-            <div className="stat-number purple">150+</div>
+          <div className="stat-item fade-up">
+            <div className="stat-number purple count" data-target="150">0</div>
             <div className="stat-label">Successful Trades</div>
           </div>
-          <div className="stat-item">
-            <div className="stat-number blue">100+</div>
+          <div className="stat-item fade-up">
+            <div className="stat-number blue count" data-target="100">0</div>
             <div className="stat-label">Free Donations</div>
           </div>
         </div>
       </section>
 
-      {/* Community Exchange */}
-      <section className="community-section">
+      {/* Owl Background Band */}
+      <div className="owl-zone">
+        <div className="owl owl-1"></div>
+        <div className="owl owl-2"></div>
+        <div className="owl owl-3"></div>
+        <div className="owl owl-4"></div>
+      </div>
+
+
+      <section className="community-section fade-up">
         <h2 className="community-title">Community Exchange</h2>
         <p className="community-description">
           Discover amazing items shared, traded, and sold by your neighbors
         </p>
-
-        <div className="community-search">
-          <input
-            type="text"
-            placeholder="Search items, descriptions, tags..."
-            className="community-search-input"
-            value={communitySearchTerm}
-            onChange={(e) => setCommunitySearchTerm(e.target.value)}
-            onClick={triggerPopup}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (communitySearchTerm.trim() !== "") {
-                  handleCommunitySearchKeyDown(e);
-                } else {
-                  triggerPopup();
-                }
-              }
-            }}
-          />
+        <div className="community-search" style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <button className="browse-btn" onClick={() => navigate("/marketplace")}>
             Browse Community Items
           </button>
