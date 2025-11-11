@@ -107,14 +107,24 @@ const UserDashboard = () => {
             </Button>
           )}
 
-          <Button
-            variant="contained"
-            className="post-item-btn"
-            startIcon={<AddIcon />}
-            onClick={handleOpenPostModal}
-          >
-            Post Item
-          </Button>
+          {currentUser?.account_type === "Seller" ? (
+            <Button
+              variant="contained"
+              className="post-item-btn"
+              startIcon={<AddIcon />}
+              onClick={handleOpenPostModal}
+            >
+              Post Item
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              className="post-item-btn"
+            >
+              Become a Seller
+            </Button>
+          )}
+
 
           <Avatar className="user-avatar">
             {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
