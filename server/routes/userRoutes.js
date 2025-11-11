@@ -141,5 +141,27 @@ router.post("/change-password", async (req, res) => {
   }
 });
 
+router.put("/account-type", async (req, res) => {
+  const { id, account_type } = req.body;
+
+  if (!id || !account_type) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    await sql.query`
+      UPDATE Users
+      SET account_type = ${account_type}
+      WHERE id = ${id};
+    `;
+
+    res.status(200).json({ message: "Account type updated successfully" });
+  } catch (err) {
+    console.error("Error updating account type:", err);
+    res.status(500).json({ message: "Server error updating account type" });
+  }
+});
+
+
 module.exports = router;
 

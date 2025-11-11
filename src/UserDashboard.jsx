@@ -48,6 +48,33 @@ const UserDashboard = () => {
   const handleOpenPostModal = () => setOpenPostModal(true);
   const handleClosePostModal = () => setOpenPostModal(false);
 
+  const handleBecomeSeller = async () => {
+  try {
+    if (!currentUser) return;
+
+    // Send update request to backend
+    const response = await fetch("http://localhost:5000/api/users/account-type", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: currentUser.id, account_type: "Seller" }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update account type");
+    }
+
+    // Update local state + localStorage so the UI changes immediately
+    const updatedUser = { ...currentUser, account_type: "Seller" };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setCurrentUser(updatedUser);
+
+    alert("You are now a Seller! You can post items.");
+  } catch (err) {
+    console.error("Error updating account type:", err);
+  }
+};
+
+
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
       navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
@@ -119,7 +146,8 @@ const UserDashboard = () => {
           ) : (
             <Button
               variant="outlined"
-              className="post-item-btn"
+              className="post-item-btn" // Using same css style as Post Item button
+              onClick={handleBecomeSeller}
             >
               Become a Seller
             </Button>
