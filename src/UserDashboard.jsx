@@ -220,6 +220,14 @@ const UserDashboard = () => {
         </Container>
       </Box>
 
+      {/* Floating Owl Zone */}
+    <div className="owl-zone">
+      <div className="owl owl-1"></div>
+      <div className="owl owl-2"></div>
+      <div className="owl owl-3"></div>
+      <div className="owl owl-4"></div>
+    </div>
+
       {/* Post Item Modal */}
       <PostItem open={openPostModal} onClose={handleClosePostModal} />
     </Box>

@@ -16,11 +16,12 @@ body {
 /* Dashboard Wrapper - Full Page */
 .dashboard-wrapper {
   min-height: 100vh;
-  width: 100%;
-  background: linear-gradient(to bottom, #fff, #fff9e6);
+  background: linear-gradient(to bottom, #fffceb, #fff7d6);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
+
 
 /* Header Bar - Fixed at Top */
 .dashboard-header {
@@ -110,21 +111,40 @@ body {
 }
 
 .username {
-  font-weight: 500 !important;
-  color: #1f2937 !important;
+  font-weight: 600 !important;
+  color: #4a4a4a !important;
+  font-size: 1rem !important;
+  margin: 0 !important;              
+  padding-top: 2px !important;      
+  letter-spacing: 0.2px !important;
+  opacity: 0.9;
+  text-transform: lowercase;
+  display: flex;
+  align-items: center;
 }
 
+.username:hover {
+  opacity: 1;
+}
+
+
 .sign-out-btn {
-  border-color: #d1d5db !important;
-  color: #6b7280 !important;
-  text-transform: none !important;
-  border-radius: 8px !important;
+  background: linear-gradient(135deg, #facc15, #d97706) !important;
+  border: none !important;
+  padding: 12px 28px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 40px !important;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(217,119,6,0.25) !important;
+  transition: transform .25s ease, box-shadow .25s ease !important;
 }
 
 .sign-out-btn:hover {
-  background-color: #f9fafb !important;
-  border-color: #9ca3af !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(217,119,6,0.35) !important;
 }
+
 
 /* Main Content Area */
 .dashboard-content {
@@ -140,8 +160,12 @@ body {
 /* Welcome Section */
 .welcome-section {
   text-align: center;
-  margin-bottom: 80px;
+  margin-top: 40px;
+  margin-bottom: 70px;
+  padding: 0 20px;
+  text-shadow: 0 1px 18px rgba(217,119,6,0.12);
 }
+
 
 .welcome-title {
   font-size: 3.5rem !important;
@@ -194,55 +218,83 @@ body {
   background-color: #1f2937 !important;
 }
 
-/* Feature Cards */
+/* Feature Cards - Match Landing Style */
 .feature-cards {
-  margin-top: 60px !important;
-  max-width: 1200px;
+  margin-top: 50px !important;
+  max-width: 1150px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  gap: 35px !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
-.feature-cards.MuiGrid-container {
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: center !important;
-  gap: 24px !important;
-}
-
-.feature-cards > .MuiGrid-item {
-  flex: 0 1 350px !important;
-  max-width: 350px !important;
-  padding: 0 !important;
-}
-
+/* Individual Card Style Upgrade */
 .feature-card {
-  border-radius: 16px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid #f3f4f6 !important;
-  height: 100%;
-  transition: all 0.3s ease !important;
-  background-color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(14px) !important;
+  border-radius: 20px !important;
+  padding: 28px 22px !important;
+  border: 1.5px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.10) !important;
+  transition: transform .35s ease, box-shadow .35s ease !important;
+  transform-origin: center center !important;
 }
 
 .feature-card:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-  transform: translateY(-4px);
+  transform: scale(1.10) !important;
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.15),
+    0 0 40px rgba(250, 204, 21, 0.45), 
+    0 0 80px rgba(217, 119, 6, 0.25) !important;
 }
 
-.feature-card .MuiCardContent-root {
-  padding: 32px 24px !important;
-  text-align: center;
+/* Icon Container Upgrade */
+.icon-container {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform .35s ease;
+}
+
+.feature-card:hover .icon-container {
+  transform: translateY(-6px) scale(1.18);
+}
+
+/* Text Styling to Match Landing */
+.feature-title {
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  color: #2d2d2d !important;
+  margin-bottom: 10px !important;
+}
+
+.feature-description {
+  color: #4b4b4b !important;
+  font-size: 0.98rem !important;
+  line-height: 1.55 !important;
 }
 
 .icon-container {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  align-items: center;
+  margin: 0 auto 16px;
+  transition: transform .25s ease;
 }
+
+.feature-card:hover .icon-container {
+  transform: scale(1.12);
+}
+
 
 .icon-container.green {
   background-color: #d1fae5;
@@ -306,10 +358,11 @@ body {
   }
 
   .header-right {
-    width: 100%;
-    justify-content: space-between;
-    order: 2;
-  }
+   display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 
   .welcome-title {
     font-size: 2.5rem !important;
@@ -341,4 +394,77 @@ body {
   .username {
     order: -1;
   }
+}
+
+
+.feature-cards {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;     /* <-- stops wrapping */
+  gap: 32px !important;
+  max-width: 1200px;
+  margin: 50px auto 0 auto;
+  margin-bottom: -90px;
+  padding: 0 20px;
+}
+
+/* Override MUI Grid spacing behavior */
+.feature-cards > .MuiGrid-item {
+  width: 100% !important;
+  flex: 1 !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+/* Center Titles & Text Better */
+.feature-title,
+.feature-description {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Make the icons + bold title visually centered perfectly */
+.feature-card .MuiCardContent-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Floating Owl Zone (Dashboard Bottom) */
+.owl-zone {
+  position: relative;
+  width: 100%;
+  height: 90px;
+  margin-top: -120px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Owl styling */
+.owl {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-image: url("/owl.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.42;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+  animation: owlDrift var(--speed) ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Placement */
+.owl-1 { left: 26%; top: 45%; --speed: 18s; }
+.owl-2 { left: 41%; top: 55%; --speed: 22s; }
+.owl-3 { left: 56%; top: 48%; --speed: 26s; }
+.owl-4 { left: 71%; top: 58%; --speed: 30s; }
+
+
+@keyframes owlDrift {
+  0%   { transform: translate(0,0) rotate(0deg);   opacity: .22; }
+  50%  { transform: translate(25px,-20px) rotate(4deg); opacity: .38; }
+  100% { transform: translate(-20px,10px) rotate(-3deg); opacity: .22; }
 }
