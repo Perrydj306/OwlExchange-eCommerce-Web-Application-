@@ -40,9 +40,11 @@ app.post("/api/users", async (req, res) => {
     const emailDomain = email.split("@")[1];
     const role = emailDomain === "owladmin.com" ? "Admin" : "User";
 
+    const account_type = role === "User" ? "Buyer" : null;
+
     await sql.query`
-      INSERT INTO Users (username, email, password, role, status)
-      VALUES (${username}, ${email}, ${hashedPassword}, ${role}, 'Active')
+      INSERT INTO Users (username, email, password, role, account_type, status)
+      VALUES (${username}, ${email}, ${hashedPassword}, ${role}, ${account_type}, 'Active')
     `;
     return res.status(201).send("User created successfully");
   } catch (err) {
