@@ -134,7 +134,7 @@ const UserDashboard = () => {
             </Button>
           )}
 
-          {currentUser?.account_type === "Seller" ? (
+          {currentUser?.account_type === "Seller" && (
             <Button
               variant="contained"
               className="post-item-btn"
@@ -143,16 +143,17 @@ const UserDashboard = () => {
             >
               Post Item
             </Button>
-          ) : (
+          )}
+
+          {currentUser?.account_type === "Buyer" && (
             <Button
               variant="outlined"
-              className="post-item-btn" // Using same css style as Post Item button
+              className="post-item-btn"
               onClick={handleBecomeSeller}
             >
               Become a Seller
             </Button>
           )}
-
 
           <Avatar className="user-avatar">
             {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
