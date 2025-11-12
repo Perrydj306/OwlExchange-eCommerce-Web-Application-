@@ -11,45 +11,6 @@
   overflow-y: auto;
 }
 
-/* Background Floating Blobs (Visible + Behind Content) */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.55;
-  animation: float 14s ease-in-out infinite alternate;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Content stays above blobs */
-.landing-container > *:not(.blob) {
-  position: relative;
-  z-index: 2;
-}
-
-.blob-one {
-  width: 420px;
-  height: 420px;
-  background: #facc15;
-  top: -120px;
-  left: -120px;
-}
-
-.blob-two {
-  width: 500px;
-  height: 500px;
-  background: #f97316;
-  bottom: -160px;
-  right: -140px;
-  animation-duration: 17s;
-}
-
-@keyframes float {
-  0%   { transform: translate(0px, 0px) scale(1); }
-  50%  { transform: translate(80px, -40px) scale(1.15); }
-  100% { transform: translate(-40px, 40px) scale(1); }
-}
 
 /* Navbar */
 .navbar {
@@ -133,7 +94,6 @@
 
 .card {
   background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 30px 20px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
@@ -188,7 +148,6 @@
 /* Statistics Section */
 .stats-section {
   background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(14px);
   padding: 60px 20px;
   margin: 0 20px 60px;
   border-radius: 24px;
@@ -231,7 +190,6 @@
 
   /* Spotlight Glass Card Effect */
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(12px);
   box-shadow:
     0 8px 25px rgba(0,0,0,0.12),
     0 0 80px rgba(250, 204, 21, 0.25), 

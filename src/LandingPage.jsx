@@ -54,9 +54,6 @@ function LandingPage() {
   return (
     <div className="landing-container">
 
-      <div className="blob blob-one"></div>
-      <div className="blob blob-two"></div>
-
       <nav className="navbar fade-up">
         <div className="logo">OwlExchange🦉</div>
         <button className="signin-btn" onClick={() => navigate("/login")}>
