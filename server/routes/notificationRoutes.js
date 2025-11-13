@@ -66,6 +66,53 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+// GET /api/notifications/count/:userId
+router.get("/count/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input("userId", sql.Int, userId)
+      .query(`
+        SELECT COUNT(*) AS count
+        FROM Notifications
+        WHERE (buyerId = @userId OR sellerId = @userId)
+          AND isRead = 0
+      `);
+
+    res.json({ count: result.recordset[0].count });
+
+  } catch (err) {
+    console.error("Error fetching notification count:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// MARK ALL AS READ
+router.put("/mark-read/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const pool = await sql.connect();
+
+    await pool.request()
+      .input("userId", sql.Int, userId)
+      .query(`
+        UPDATE Notifications
+        SET isRead = 1
+        WHERE buyerId = @userId OR sellerId = @userId
+      `);
+
+    res.json({ message: "Notifications marked as read" });
+
+  } catch (err) {
+    console.error("Error marking as read:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 // UPDATE STATUS (Seller → Accept / Decline)
 router.put("/:id/status", async (req, res) => {

@@ -8,13 +8,19 @@ const Notifications = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (!user) return;
+  if (!user) return;
 
-    fetch(`http://localhost:5000/api/notifications/user/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => setNotifications(data))
-      .catch((err) => console.error("Fetch error:", err));
-  }, [user]);
+  // 1. Load notifications
+  fetch(`http://localhost:5000/api/notifications/user/${user.id}`)
+    .then((res) => res.json())
+    .then((data) => setNotifications(data))
+    .catch((err) => console.error("Fetch error:", err));
+
+  // 2. Mark all notifications as read
+  fetch(`http://localhost:5000/api/notifications/mark-read/${user.id}`, {
+    method: "PUT",
+  }).catch((err) => console.error("Mark-read error:", err));
+}, [user]);
 
   const handleAccept = async (id) => {
     await fetch(`http://localhost:5000/api/notifications/${id}/status`, {

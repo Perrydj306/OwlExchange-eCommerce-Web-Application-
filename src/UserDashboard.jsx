@@ -31,6 +31,8 @@ const UserDashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [openPostModal, setOpenPostModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [notifCount, setNotifCount] = useState(0);
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -50,6 +52,19 @@ const UserDashboard = () => {
     localStorage.setItem("user", JSON.stringify(normalized));
     setCurrentUser(normalized);
   }, [navigate]);
+
+ useEffect(() => {
+  if (!currentUser) return;
+
+  fetch(`http://localhost:5000/api/notifications/count/${currentUser.id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("NOTIF COUNT FROM SERVER:", data);
+      setNotifCount(data.count);
+    })
+    .catch((err) => console.error("Notif count error:", err));
+}, [currentUser]);
+
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
@@ -98,7 +113,7 @@ const UserDashboard = () => {
   };
 
   if (!currentUser) {
-    return null; // or a small loading spinner if you want
+    return null; 
   }
 
   return (
@@ -116,10 +131,17 @@ const UserDashboard = () => {
       </Typography>
     </Box>
 
-    {/* Move bell here */}
-    <IconButton className="notifications-icon-btn" onClick={() => navigate("/notifications")}>
-      <NotificationsIcon />
-    </IconButton>
+    <IconButton
+  className="notifications-icon-btn"
+  onClick={() => navigate("/notifications")}
+>
+  <NotificationsIcon />
+
+  {notifCount > 0 && (
+    <span className="notif-badge">{notifCount}</span>
+  )}
+</IconButton>
+
   </Box>
 
   {/* CENTER SECTION */}
