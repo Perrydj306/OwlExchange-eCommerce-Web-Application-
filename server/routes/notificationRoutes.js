@@ -3,9 +3,7 @@ const router = express.Router();
 const sql = require("mssql");
 
 
-// ------------------------------------------------------
 // CREATE NOTIFICATION (Buyer → Seller)
-// ------------------------------------------------------
 router.post("/", async (req, res) => {
   const { itemId, sellerId, buyerId, message } = req.body;
 
@@ -33,10 +31,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-
-// ------------------------------------------------------
 // GET ALL NOTIFICATIONS FOR A USER (Buyer + Seller)
-// ------------------------------------------------------
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -72,9 +67,7 @@ router.get("/user/:userId", async (req, res) => {
 });
 
 
-// ------------------------------------------------------
 // UPDATE STATUS (Seller → Accept / Decline)
-// ------------------------------------------------------
 router.put("/:id/status", async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
