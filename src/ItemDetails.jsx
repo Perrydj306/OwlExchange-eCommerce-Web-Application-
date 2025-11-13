@@ -10,6 +10,8 @@ import {
   CircularProgress,
   Avatar,
   IconButton,
+  Modal,
+  TextField
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmailIcon from "@mui/icons-material/Email";
@@ -22,6 +24,7 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
+
 import "./ItemDetails.css";
 
 const ItemDetails = () => {
@@ -29,8 +32,52 @@ const ItemDetails = () => {
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+  const [openContactModal, setOpenContactModal] = useState(false);
+  const [messageText, setMessageText] = useState("");
+
+  // SEND CUSTOM MESSAGE TO SELLER
+  const handleSendContactMessage = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("You must be logged in to contact the seller.");
+      return;
+    }
+
+    if (!messageText.trim()) {
+      alert("Please type a message.");
+      return;
+    }
+
+    try {
+      const payload = {
+        itemId: item.id,
+        sellerId: item.userId,
+        buyerId: user.id,
+        message: messageText
+      };
+
+      const res = await fetch("http://localhost:5000/api/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert("Your message was sent to the seller!");
+        setMessageText("");
+        setOpenContactModal(false);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        alert(body.error || "Failed to send message.");
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+      alert("Server error.");
+    }
+  };
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/items/${id}`)
@@ -60,6 +107,8 @@ const ItemDetails = () => {
 
   return (
     <Box className="item-details-page">
+
+      {/* BACK BUTTON */}
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -68,33 +117,31 @@ const ItemDetails = () => {
         Back
       </Button>
 
-        {/* Main Item Image with Click-to-Zoom */}
-        <Card
-          className="item-image-card"
-          elevation={2}
-          onClick={() => setShowModal(true)} // open modal when clicked
-        >
-          <img
-            src={item.imageUrl || "/placeholder.png"}
-            alt={item.title}
-            className="item-image"
-          />
-        </Card>
+      {/* MAIN IMAGE */}
+      <Card
+        className="item-image-card"
+        elevation={2}
+        onClick={() => setShowModal(true)}
+      >
+        <img
+          src={item.imageUrl || "/placeholder.png"}
+          alt={item.title}
+          className="item-image"
+        />
+      </Card>
 
-        {/* Image Modal (click outside to close) */}
-        {showModal && (
-          <div className="image-modal" onClick={() => setShowModal(false)}>
-            <img src={item.imageUrl || "/placeholder.png"} alt={item.title} />
-          </div>
-        )}
+      {/* FULLSCREEN IMAGE MODAL */}
+      {showModal && (
+        <div className="image-modal" onClick={() => setShowModal(false)}>
+          <img src={item.imageUrl || "/placeholder.png"} alt={item.title} />
+        </div>
+      )}
 
-
-        {/* Main Info Container */}
-        <Box className="item-main-info">
-
-
-        {/* Right: Item Info */}
+      {/* MAIN INFO */}
+      <Box className="item-main-info">
         <Box className="item-info-column">
+
+          {/* ITEM INFO CARD */}
           <Card className="item-info-card" elevation={3}>
             <Typography variant="h5" className="item-title">
               {item.title}
@@ -129,37 +176,28 @@ const ItemDetails = () => {
               </Typography>
             </Box>
 
+            {/* CONTACT SELLER BUTTON */}
             <Button
               variant="contained"
               startIcon={<ChatBubbleOutlineIcon />}
               className="contact-seller-btn"
+              onClick={() => setOpenContactModal(true)}
             >
               Contact Seller
             </Button>
 
+            {/* SAVE + SHARE */}
             <Box className="action-buttons">
-              <Button
-                startIcon={<FavoriteBorderIcon />}
-                variant="outlined"
-                color="inherit"
-              >
+              <Button startIcon={<FavoriteBorderIcon />} variant="outlined">
                 Save
               </Button>
-              <Button
-                startIcon={<ShareIcon />}
-                variant="outlined"
-                color="inherit"
-              >
+              <Button startIcon={<ShareIcon />} variant="outlined">
                 Share
               </Button>
             </Box>
 
-            <Button
-              startIcon={<ReportIcon />}
-              variant="text"
-              color="error"
-              className="report-btn"
-            >
+            {/* REPORT BUTTON */}
+            <Button startIcon={<ReportIcon />} color="error">
               Report Item
             </Button>
 
@@ -184,12 +222,7 @@ const ItemDetails = () => {
               Tags
             </Typography>
             {item.tags ? (
-              <Chip
-                label={item.tags}
-                variant="outlined"
-                color="default"
-                className="item-tag"
-              />
+              <Chip label={item.tags} variant="outlined" className="item-tag" />
             ) : (
               <Typography variant="body2" color="textSecondary">
                 No tags provided
@@ -204,7 +237,7 @@ const ItemDetails = () => {
             <Typography variant="body2">{item.contactMethod}</Typography>
           </Card>
 
-          {/* Seller Information */}
+          {/* SELLER INFO */}
           <Card className="seller-info-card" elevation={2}>
             <Typography variant="subtitle1" className="section-header">
               Seller Information
@@ -237,8 +270,7 @@ const ItemDetails = () => {
             </Box>
           </Card>
 
-
-          {/* Safety Tips */}
+          {/* SAFETY TIPS */}
           <Card className="safety-card" elevation={1}>
             <Typography variant="subtitle1" className="section-header">
               Safety Tips
@@ -253,6 +285,50 @@ const ItemDetails = () => {
           </Card>
         </Box>
       </Box>
+
+      {/* CONTACT SELLER MODAL */}
+      <Modal open={openContactModal} onClose={() => setOpenContactModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "white",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 24,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Contact Seller
+          </Typography>
+
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Message the seller about: <strong>{item.title}</strong>
+          </Typography>
+
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            placeholder="Hi! I'm interested in this item..."
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+          />
+
+          <Button
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={handleSendContactMessage}
+            fullWidth
+          >
+            Send Message
+          </Button>
+        </Box>
+      </Modal>
+
     </Box>
   );
 };

@@ -67,6 +67,7 @@ router.post("/", async (req, res) => {
         role: user.role,
         status: user.status,
         banned: user.banned,
+        account_type: user.account_type,
       },
     });
   } catch (err) {

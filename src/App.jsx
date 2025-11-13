@@ -9,6 +9,7 @@ import ItemDetails from "./ItemDetails.jsx";
 import ChangePassword from "./ChangePassword";
 import ProtectedRoute from "./ProtectedRoute";
 import CommunitySearch from "./CommunitySearch";
+import Notifications from "./Notifications";
 
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/notifications" element={<Notifications />} />
+
 
         {/* Protected routes */}
         <Route
