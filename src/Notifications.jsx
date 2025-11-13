@@ -39,7 +39,7 @@ const Notifications = () => {
 
   return (
     <div className="notif-page">
-      <h1 className="notif-title">Notifications</h1>
+      <h1 className="notif-title">Notifications🦉</h1>
 
       <button className="notif-back" onClick={() => navigate(-1)}>
         ⬅ Back
