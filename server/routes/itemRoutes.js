@@ -83,16 +83,31 @@ router.get("/count", async (req, res) => {
 // ===== Get All Items (exclude rejected) =====
 router.get("/", async (req, res) => {
   try {
-    const result = await sql.query(`
-      SELECT id, title, description, category, condition, price, tags, contactMethod,
-             transactionType, imageUrl, status, createdAt
-      FROM Items
-      WHERE rejected = 0 OR rejected IS NULL
-      ORDER BY createdAt DESC
-    `);
+    const query = `
+      SELECT 
+        i.id,
+        i.title,
+        i.description,
+        i.category,
+        i.condition,
+        i.price,
+        i.tags,
+        i.contactMethod,
+        i.transactionType,
+        i.imageUrl,
+        i.status,
+        i.createdAt,
+        u.username AS seller
+      FROM Items i
+      LEFT JOIN Users u ON i.userId = u.id
+      WHERE i.rejected = 0 OR i.rejected IS NULL
+      ORDER BY i.createdAt DESC
+    `;
+
+    const result = await sql.query(query);
     res.json(result.recordset);
   } catch (err) {
-    console.error("Error fetching items:", err);
+    console.error("Error fetching items with seller:", err);
     res.status(500).json({ error: "Failed to fetch items" });
   }
 });
