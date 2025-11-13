@@ -7,7 +7,9 @@ import LandingPage from "./LandingPage";
 import SearchResults from "./SearchResults";
 import ItemDetails from "./ItemDetails.jsx";
 import ChangePassword from "./ChangePassword";
-import ProtectedRoute from "./ProtectedRoute"; 
+import ProtectedRoute from "./ProtectedRoute";
+import CommunitySearch from "./CommunitySearch";
+
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
         {/* Public item routes */}
         <Route path="/search" element={<SearchResults />} />
         <Route path="/item/:id" element={<ItemDetails />} />
+
+        <Route path="/communitysearch" element={<CommunitySearch />} />
       </Routes>
     </Router>
   );

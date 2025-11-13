@@ -108,7 +108,7 @@ function LandingPage() {
           Discover amazing items shared by your neighbors.
         </p>
         <div className="community-search" style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-          <button className="browse-btn" onClick={() => navigate("/marketplace")}>
+          <button className="browse-btn" onClick={() => navigate("/communitysearch")}>
             Browse Community Items
           </button>
         </div>
