@@ -78,8 +78,10 @@ router.get("/count/:userId", async (req, res) => {
       .query(`
         SELECT COUNT(*) AS count
         FROM Notifications
-        WHERE (buyerId = @userId OR sellerId = @userId)
-          AND isRead = 0
+        WHERE
+          (buyerId = @userId AND buyerRead = 0)
+          OR
+          (sellerId = @userId AND sellerRead = 0)
       `);
 
     res.json({ count: result.recordset[0].count });
@@ -101,14 +103,15 @@ router.put("/mark-read/:userId", async (req, res) => {
       .input("userId", sql.Int, userId)
       .query(`
         UPDATE Notifications
-        SET isRead = 1
+        SET 
+          buyerRead = CASE WHEN buyerId = @userId THEN 1 ELSE buyerRead END,
+          sellerRead = CASE WHEN sellerId = @userId THEN 1 ELSE sellerRead END
         WHERE buyerId = @userId OR sellerId = @userId
       `);
 
-    res.json({ message: "Notifications marked as read" });
-
+    res.json({ message: "Marked as read." });
   } catch (err) {
-    console.error("Error marking as read:", err);
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });

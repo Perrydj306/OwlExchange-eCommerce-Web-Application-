@@ -7,20 +7,26 @@ const Notifications = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Fetch notifications + mark them read
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  // 1. Load notifications
-  fetch(`http://localhost:5000/api/notifications/user/${user.id}`)
-    .then((res) => res.json())
-    .then((data) => setNotifications(data))
-    .catch((err) => console.error("Fetch error:", err));
+    const loadNotifications = async () => {
+      const res = await fetch(
+        `http://localhost:5000/api/notifications/user/${user.id}`
+      );
+      const data = await res.json();
+      setNotifications(data);
 
-  // 2. Mark all notifications as read
-  fetch(`http://localhost:5000/api/notifications/mark-read/${user.id}`, {
-    method: "PUT",
-  }).catch((err) => console.error("Mark-read error:", err));
-}, [user]);
+      // Mark notifications as read
+      await fetch(
+        `http://localhost:5000/api/notifications/mark-read/${user.id}`,
+        { method: "PUT" }
+      );
+    };
+
+    loadNotifications();
+  }, []);
 
   const handleAccept = async (id) => {
     await fetch(`http://localhost:5000/api/notifications/${id}/status`, {
@@ -56,10 +62,7 @@ const Notifications = () => {
       ) : (
         notifications.map((n) => (
           <div key={n.id} className="notif-card">
-
-            {/* HEADER */}
             <div className="notif-header">
-              {/* SELLER VIEW */}
               {isSeller(n) && n.status === "pending" && (
                 <>
                   <strong>{n.buyerName}</strong> is interested in{" "}
@@ -67,7 +70,6 @@ const Notifications = () => {
                 </>
               )}
 
-              {/* BUYER VIEW */}
               {isBuyer(n) && n.status === "accepted" && (
                 <span className="notif-item">
                   ✔ Your offer for <strong>{n.itemTitle}</strong> was accepted!
@@ -87,19 +89,15 @@ const Notifications = () => {
               )}
             </div>
 
-            {/* MESSAGE */}
             <p className="notif-message">
               <strong>Message:</strong> {n.message}
             </p>
 
-            {/* STATUS BADGE */}
             <span className={`notif-status ${n.status}`}>
               {n.status.toUpperCase()}
             </span>
 
-            {/* BUTTONS */}
             <div className="notif-buttons">
-              {/* SELLER CAN ACCEPT/DECLINE */}
               {isSeller(n) && n.status === "pending" && (
                 <>
                   <button className="btn-accept" onClick={() => handleAccept(n.id)}>
@@ -111,7 +109,6 @@ const Notifications = () => {
                 </>
               )}
 
-              {/* Everyone can view item */}
               <button
                 className="btn-view"
                 onClick={() => navigate(`/item/${n.itemId}`)}
@@ -119,7 +116,6 @@ const Notifications = () => {
                 VIEW ITEM
               </button>
             </div>
-
           </div>
         ))
       )}
