@@ -83,7 +83,7 @@ body {
 
 .search-bar {
   width: 100%;
-  max-width: 550px;   /* adjust size here */
+  max-width: 550px;   
 }
 
 .search-bar .MuiOutlinedInput-root {

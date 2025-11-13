@@ -36,11 +36,11 @@ const UserDashboard = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!storedUser) {
-      navigate("/"); // not logged in → back to landing
+      navigate("/"); // not logged in - back to landing
       return;
     }
 
-    // 🔹 Treat NULL / undefined account_type as "Buyer"
+    // Treat NULL / undefined account_type as "Buyer"
     const normalized = {
       ...storedUser,
       account_type: storedUser.account_type || "Buyer",
@@ -116,7 +116,7 @@ const UserDashboard = () => {
       </Typography>
     </Box>
 
-    {/* 🔔 Move bell here */}
+    {/* Move bell here */}
     <IconButton className="notifications-icon-btn" onClick={() => navigate("/notifications")}>
       <NotificationsIcon />
     </IconButton>
