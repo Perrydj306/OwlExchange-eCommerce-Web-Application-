@@ -4,6 +4,7 @@ const connectDB = require("./db");
 const sql = require("mssql");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const SECRET_KEY = "supersecret"; // move to .env for production
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
+app.use("/api/notifications", notificationRoutes);
 
 // Connect to MSSQL
 connectDB();

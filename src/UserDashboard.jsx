@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -10,8 +10,9 @@ import {
   Avatar,
   Card,
   CardContent,
-  Grid
-} from '@mui/material';
+  Grid,
+  IconButton,
+} from "@mui/material";
 import {
   Search as SearchIcon,
   CardGiftcard as GiftIcon,
@@ -19,10 +20,11 @@ import {
   Favorite as HeartIcon,
   Add as AddIcon,
   Logout as LogoutIcon,
-  AdminPanelSettings as AdminIcon 
-} from '@mui/icons-material';
-import './UserDashboard.css';
-import PostItem from './PostItem';
+  AdminPanelSettings as AdminIcon,
+  Notifications as NotificationsIcon,
+} from "@mui/icons-material";
+import "./UserDashboard.css";
+import PostItem from "./PostItem";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -32,48 +34,58 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setCurrentUser(storedUser);
-    } else {
-      navigate("/"); // redirect to home if not logged in
+
+    if (!storedUser) {
+      navigate("/"); // not logged in → back to landing
+      return;
     }
+
+    // 🔹 Treat NULL / undefined account_type as "Buyer"
+    const normalized = {
+      ...storedUser,
+      account_type: storedUser.account_type || "Buyer",
+    };
+
+    // persist the normalized value so next login is consistent
+    localStorage.setItem("user", JSON.stringify(normalized));
+    setCurrentUser(normalized);
   }, [navigate]);
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate('/');
+    navigate("/");
   };
 
   const handleOpenPostModal = () => setOpenPostModal(true);
   const handleClosePostModal = () => setOpenPostModal(false);
 
   const handleBecomeSeller = async () => {
-  try {
-    if (!currentUser) return;
+    try {
+      if (!currentUser) return;
 
-    // Send update request to backend
-    const response = await fetch("http://localhost:5000/api/users/account-type", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: currentUser.id, account_type: "Seller" }),
-    });
+      const response = await fetch(
+        "http://localhost:5000/api/users/account-type",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: currentUser.id, account_type: "Seller" }),
+        }
+      );
 
-    if (!response.ok) {
-      throw new Error("Failed to update account type");
+      if (!response.ok) {
+        throw new Error("Failed to update account type");
+      }
+
+      const updatedUser = { ...currentUser, account_type: "Seller" };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+
+      alert("You are now a Seller! You can post items.");
+    } catch (err) {
+      console.error("Error updating account type:", err);
     }
-
-    // Update local state + localStorage so the UI changes immediately
-    const updatedUser = { ...currentUser, account_type: "Seller" };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setCurrentUser(updatedUser);
-
-    alert("You are now a Seller! You can post items.");
-  } catch (err) {
-    console.error("Error updating account type:", err);
-  }
-};
-
+  };
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
@@ -82,109 +94,120 @@ const UserDashboard = () => {
   };
 
   const handleBackToAdmin = () => {
-    navigate('/admin');
+    navigate("/admin");
   };
+
+  if (!currentUser) {
+    return null; // or a small loading spinner if you want
+  }
 
   return (
     <Box className="dashboard-wrapper">
       {/* Header Bar */}
       <Box className="dashboard-header">
-        <Box className="header-left">
-          <Avatar className="owl-logo">🦉</Avatar>
-          <Box>
-            <Typography variant="h6" className="site-title">
-              OwlExchange
-            </Typography>
-            <Typography variant="caption" className="site-subtitle">
-              Community Donations, Trades & Sales
-            </Typography>
-          </Box>
-        </Box>
+  {/* LEFT SECTION */}
+  <Box className="header-left">
+    <Avatar className="owl-logo">🦉</Avatar>
 
-        <Box className="header-center">
-          <TextField
-            placeholder="Search donations, trades, sales..."
-            variant="outlined"
-            size="small"
-            className="search-bar"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
+    <Box>
+      <Typography variant="h6" className="site-title">OwlExchange</Typography>
+      <Typography variant="caption" className="site-subtitle">
+        Community Donations, Trades & Sales
+      </Typography>
+    </Box>
 
-        <Box className="header-right">
+    {/* 🔔 Move bell here */}
+    <IconButton className="notifications-icon-btn" onClick={() => navigate("/notifications")}>
+      <NotificationsIcon />
+    </IconButton>
+  </Box>
 
-          {/* ✅ Show only for admins */}
-          {currentUser?.role === "Admin" && (
-            <Button
-              variant="contained"
-              className="back-admin-btn"
-              startIcon={<AdminIcon />}
-              onClick={handleBackToAdmin}
-            >
-              Admin Dashboard
-            </Button>
-          )}
+  {/* CENTER SECTION */}
+  <Box className="header-center">
+    <TextField
+      placeholder="Search donations, trades, sales..."
+      variant="outlined"
+      size="small"
+      className="search-bar"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      onKeyDown={handleSearchKeyDown}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Box>
 
-          {currentUser?.account_type === "Seller" && (
-            <Button
-              variant="contained"
-              className="post-item-btn"
-              startIcon={<AddIcon />}
-              onClick={handleOpenPostModal}
-            >
-              Post Item
-            </Button>
-          )}
+  {/* RIGHT SECTION */}
+  <Box className="header-right">
+    {currentUser?.role === "Admin" && (
+      <Button
+        variant="contained"
+        className="back-admin-btn"
+        startIcon={<AdminIcon />}
+        onClick={handleBackToAdmin}
+      >
+        Admin Dashboard
+      </Button>
+    )}
 
-          {currentUser?.account_type === "Buyer" && (
-            <Button
-              variant="outlined"
-              className="post-item-btn"
-              onClick={handleBecomeSeller}
-            >
-              Become a Seller
-            </Button>
-          )}
+    {currentUser?.account_type === "Seller" && (
+      <Button
+        variant="contained"
+        className="post-item-btn"
+        startIcon={<AddIcon />}
+        onClick={handleOpenPostModal}
+      >
+        Post Item
+      </Button>
+    )}
 
-          <Avatar className="user-avatar">
-            {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
-          </Avatar>
+    {currentUser?.account_type === "Buyer" && (
+      <Button
+        variant="outlined"
+        className="post-item-btn"
+        onClick={handleBecomeSeller}
+      >
+        Become a Seller
+      </Button>
+    )}
 
-          <Typography variant="body2" className="username">
-            {currentUser ? currentUser.email.split("@")[0] : "Loading..."}
-          </Typography>
+    <Avatar className="user-avatar">
+      {currentUser ? currentUser.email.charAt(0).toUpperCase() : "?"}
+    </Avatar>
 
-          <Button
-            variant="outlined"
-            className="sign-out-btn"
-            startIcon={<LogoutIcon />}
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </Button>
-        </Box>
-      </Box>
+    <Typography variant="body2" className="username">
+      {currentUser ? currentUser.email.split("@")[0] : "Loading..."}
+    </Typography>
+
+    <Button
+      variant="outlined"
+      className="sign-out-btn"
+      startIcon={<LogoutIcon />}
+      onClick={handleSignOut}
+    >
+      Sign Out
+    </Button>
+  </Box>
+</Box>
+
 
       {/* Main Content */}
       <Box className="dashboard-content">
         <Container maxWidth="lg" className="main-content">
+          {/* Welcome Section */}
           <Box className="welcome-section">
             <Typography variant="h2" className="welcome-title">
               Welcome to <span className="owl-highlight">OwlExchange</span>
             </Typography>
             <Typography variant="h6" className="welcome-subtitle">
-              Your community platform for sharing, trading, and giving. Connect with
-              neighbors to donate items, make sustainable swaps, and build a stronger
-              local community.
+              Your community platform for sharing, trading, and giving. Connect
+              with neighbors to donate items, make sustainable swaps, and build
+              a stronger local community.
             </Typography>
             <Button
               variant="contained"
@@ -205,10 +228,11 @@ const UserDashboard = () => {
                     <GiftIcon className="feature-icon" />
                   </Box>
                   <Typography variant="h5" className="feature-title">
-                    Donate & Share
+                    Donate &amp; Share
                   </Typography>
                   <Typography variant="body1" className="feature-description">
-                    Give items a second life by donating to community members who need them.
+                    Give items a second life by donating to community members
+                    who need them.
                   </Typography>
                 </CardContent>
               </Card>
@@ -221,7 +245,7 @@ const UserDashboard = () => {
                     <SwapIcon className="feature-icon" />
                   </Box>
                   <Typography variant="h5" className="feature-title">
-                    Trade & Exchange
+                    Trade &amp; Exchange
                   </Typography>
                   <Typography variant="body1" className="feature-description">
                     Swap items you no longer need for things that bring you joy.
@@ -240,7 +264,8 @@ const UserDashboard = () => {
                     Build Community
                   </Typography>
                   <Typography variant="body1" className="feature-description">
-                    Connect with neighbors and create lasting relationships through sharing.
+                    Connect with neighbors and create lasting relationships
+                    through sharing.
                   </Typography>
                 </CardContent>
               </Card>
@@ -249,13 +274,13 @@ const UserDashboard = () => {
         </Container>
       </Box>
 
-      {/* Floating Owl Zone */}
-    <div className="owl-zone">
-      <div className="owl owl-1"></div>
-      <div className="owl owl-2"></div>
-      <div className="owl owl-3"></div>
-      <div className="owl owl-4"></div>
-    </div>
+      {/* Floating Owl Zone (unchanged) */}
+      <div className="owl-zone">
+        <div className="owl owl-1" />
+        <div className="owl owl-2" />
+        <div className="owl owl-3" />
+        <div className="owl owl-4" />
+      </div>
 
       {/* Post Item Modal */}
       <PostItem open={openPostModal} onClose={handleClosePostModal} />

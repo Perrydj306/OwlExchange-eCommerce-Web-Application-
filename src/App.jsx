@@ -8,6 +8,8 @@ import SearchResults from "./SearchResults";
 import ItemDetails from "./ItemDetails.jsx";
 import ChangePassword from "./ChangePassword";
 import ProtectedRoute from "./ProtectedRoute"; 
+import Notifications from "./Notifications";
+
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/notifications" element={<Notifications />} />
+
 
         {/* Protected routes */}
         <Route
