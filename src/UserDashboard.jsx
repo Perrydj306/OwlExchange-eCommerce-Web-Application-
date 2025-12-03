@@ -231,14 +231,16 @@ const UserDashboard = () => {
               with neighbors to donate items, make sustainable swaps, and build
               a stronger local community.
             </Typography>
-            <Button
-              variant="contained"
-              className="share-item-btn"
-              startIcon={<GiftIcon />}
-              onClick={handleOpenPostModal}
-            >
-              Share an Item
-            </Button>
+            {currentUser?.account_type === "Seller" && (
+              <Button
+                variant="contained"
+                className="share-item-btn"
+                startIcon={<GiftIcon />}
+                onClick={handleOpenPostModal}
+              >
+                Share an Item
+              </Button>
+            )}
           </Box>
 
           {/* Feature Cards */}
