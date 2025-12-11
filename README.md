@@ -35,6 +35,7 @@ Set the destination name to:
 OwlExchangeDB
 
 Click OK
+
 Database is now restored on the new server.
 
 2. Create a SQL Login on the New Server
