@@ -4,10 +4,15 @@ OwlExchange Launch Instructions:
 3. Make sure that you connect to server first
 
 Test Login Account Information:
+
   User
-  Email: jdoe@gmail.com
-  Password: Testpassword@1
+  
+    Email: jdoe@gmail.com
+  
+    Password: Testpassword@1
 
   Admin
-  Email: glong@owladmin.com
-  Password: Testpassword@2
+  
+    Email: glong@owladmin.com
+  
+    Password: Testpassword@2
